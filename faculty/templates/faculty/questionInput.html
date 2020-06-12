@@ -1,0 +1,15 @@
+{% extends 'faculty/basic.html' %}
+{% block title %} faculty {% endblock%}
+
+{%block body %}
+<div class="container shadow-lg" style="padding: 50px;margin: 50px auto;text-align: right;">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{form.as_p }}
+            <br>
+            <input type="submit" name="addmore" value="Add More">
+            <input class="btn-primary" type='submit' value='save'/>
+        </form>
+</div>
+
+{% endblock%}
