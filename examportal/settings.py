@@ -129,9 +129,17 @@ STATIC_URL = '/static/'
 MESSAGE_TAGS = {
     messages.ERROR: 'danger'
 }
+'''
 parent_dir = os.path.abspath(os.path.dirname(__file__) + '/..')
 MEDIA_ROOT = os.path.join(parent_dir, 'media/')
-MEDIA_URL = '/media/'
+MEDIA_URL = '/media/'''
+
+AWS_ACCESS_KEY_ID = 'AKIASJQUCNV3UVPYKBH2'
+AWS_SECRET_ACCESS_KEY = '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'
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_STORAGE_BUCKET_NAME = 'jihamedia'
+AWS_S3_REGION_NAME = 'ap-southeast-1'
 
 django_heroku.settings(locals())
 
