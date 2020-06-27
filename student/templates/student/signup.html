@@ -6,32 +6,24 @@
  {%endblock %}
 {%block body %}
 
-
-
 <html>
   <body>
     <div class="container">
       <div class="red" style="text-align: center;"> 
-          <p>Register:</p><br><br>
+          <p>Register:</p>
            </div>
-     <form id="regForm" action="login2" method="POST"  class="shadow-lg" style="border-radius: 30px;">
+     <form id="regForm" action="login2" method="POST"  enctype="multipart/form-data"  class="shadow-lg" style="border-radius: 30px;">
       {% csrf_token %}
-<br><br>
-
-
-<!-- One "tab" for each step in the form: -->
-
-
-<div class="tab"><h1>Login Info:</h1>
-  {% if flag2 %}
-      <br>
-      <div class="alert alert-danger" role="alert">
-       User already exists with this Email
-     </div>
-     <br>
-     <br>
-     {% endif %}
-     <br>
+	<div class="tab"><h1>Login Info:</h1>
+  	{% if flag2 %}
+      	<br>
+      	<div class="alert alert-danger" role="alert">
+       	User already exists with this Email
+     	</div>
+     	<br>
+     	<br>
+     	{% endif %}
+     	<br>
       <label for="email"><b>Email</b></label>
       <input type="email" placeholder="Enter Email" name="email" required>
       <p id=email_hint></p>
@@ -56,12 +48,9 @@
 
 <div class="tab"><h1>Profile Info:</h1>
   <div style="text-align: center;">
-  <img  class="rounded-circle" width="30%" src="https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg">
+    <img id="myimage" style="cursor: pointer;" onclick="myfunction()" class="rounded-circle" width="200" src="https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg">
   </div>
-  <label for="profilePic">Choose photo:</label>
-       <input type="file"
-       id="avatar" name="profilePic"
-       accept="image/png, image/jpeg" alt="https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg">
+  <input style="display: none;" type="file" id="avatar" name="profilePic" accept="image/png, image/jpeg">
   <label for="name"><b>Enter Full Name</b></label>
   <input type="text" placeholder="Enter Name" name="name" required>
 </div>
@@ -125,107 +114,13 @@
 </form> 
 
 </div>
-    
-    
-   <!--  <div class="container">
-      <div class="row">
-        <div class="col-sm-2 col-md-2 col-xs-12"></div>
-        <div class="col-sm-8 col-md-8 col-xs-12">
-  <form class="myform shadow-lg" action="login2" method="POST"     style="border:1px solid #ccc;border-radius: 30px;">
-  {% csrf_token %}
-  <div style="text-align: center;">
-      <p style="border-top-left-radius: 30px;border-top-right-radius: 30px; padding: 7px; font-size: 2vw; background-color: blanchedalmond;" >SIGN UP</p>
-      </div>
-      <br>
-      <h3 class="text-danger">&emsp;&emsp; Please fill in this form to create an account</h3>
-      <br>
-      <hr>
-      <label for="name"><b>Name</b></label>
-      <input type="text" placeholder="Enter Name" name="name" required>
-      <br>
-      <label for="address"><b>Address</b></label>
-      <input type="text" placeholder="Enter Address" name="address" required>
-      <br>
-      <label for="dob"><b>Date of Birth</b></label>
-      <input type="date" placeholder="Enter Date of Birth" name="dob" required>
-      <br>
-      {% if flag2 %}
-      <br>
-      <div class="alert alert-danger" role="alert">
-       User already exists with this Email
-     </div>
-     <br>
-     <br>
-     {% endif %}
-     <br>
-      <label for="email"><b>Email</b></label>
-      <input type="email" placeholder="Enter Email" name="email" required>
-      <br>
-  
-      <label for="password"><b>Password</b></label>
-      <input type="password" placeholder="Enter Password" name="password" required>
-      {% if flag %}
- <div class="alert alert-danger" role="alert">
-  password didnt match
-</div>
-{% endif %}
-<br>
-      <label for="repeat_password"><b>Repeat Password</b></label>
-      <input type="password" placeholder="Repeat Password" name="repeat_password" required>
-      <label for="profilePic">Choose photo:</label>
-       <input type="file"
-       id="avatar" name="profilePic"
-       accept="image/png, image/jpeg" alt="https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg">
-      <label>
-        <br><br>
-      </label>
-      <br>  
-        <br><br>
-        <button type="button" class="btn btn-block btn-outline-primary" data-toggle="modal" data-target="#exampleModalCenter">Sign Up</button>
-        <button  type="button" class="cancelbtn btn btn-block btn-outline-danger">Cancel</button>
-    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalCenterTitle">Once saved cannot be changed</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-              Please Ensure that all data filled by you are correct as per your knowledge
-          </div>
-          <div class="modal-footer">
-            <div class="clearfix">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" class="signupbtn btn btn-primary">Save changes</button>
-          </div>
-        </div>
-      </div>
-    </div>
-      </div>
-    </div>
-  </form>
-  </div>
-  <div class="col-sm-2 col-md-2 col-xs-12"></div>
-  </div>
-</div>
-
-<footer class="fixed-bottom">
-  <div class="container">
-      <div class="row">
-      <div class="col-3"></div>
-      <div class="col-6" style="text-align: center;">
-      <b class="text-white" style="font-size: large;"> CopyRight to</b><a href="https://www.onlineexambuilder.com/knowledge-center/exam-knowledge-center/how-online-examination-system-works/item10244"> OnlineExamPortal</a><a href="https://www.facebook.com/"> With Us</a>
-      </div>
-      <div class="col-3"></div>
-    </div>
-  </div>
-</footer> -->
   </body>
 
 
   <script type="text/javascript">
+  function myfunction(){
+    $('#avatar').trigger('click');
+  }
     var currentTab = 0; // Current tab is set to be the first tab (0)
 showTab(currentTab); // Display the current tab
 

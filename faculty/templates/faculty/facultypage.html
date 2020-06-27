@@ -29,14 +29,14 @@
               </div>
 
               <div class="tabcontent" id="inputquestion">
-                  <div class="container shadow-lg" style="padding: 50px;margin: 50px auto;">
+                  <div class="container shadow-lg" style="padding: 20px;margin: 50px auto;">
                     <div class="row">
                         <div class="col-md-3 col-sm-1"></div>
                         <div class="col-md-6 col-sm-12">
                             <form method="POST" enctype="multipart/form-data" style="text-align: right;color: black;">
                                 {% csrf_token %}
                                 {{ form1.as_p }}
-                                <input class="btn-primary" type='submit' value='save' name="form1submit"/>
+                                <input class="btn-primary rounded" type='submit' value='save' name="form1submit"/>
                             </form>
                         </div>
                         <div class="col-md-3 col-sm-1"></div>
@@ -80,7 +80,7 @@
               </div>
 
               <div id="availablepapers" class="tabcontent">
-                <div class="container shadow-lg" style="padding: 50px;">
+                <div class="container shadow-lg" style="padding: 20px;">
                   {% if paperID %}
                   <h3 style="text-align: center;border-bottom: 2px solid blueviolet;color: black;">ALL AVAILABLE PAPERS</h3><br><br><br>
                   {% endif %}
@@ -110,7 +110,7 @@
                             </tbody>
                           </table>
                         </div>
-                        <br><br>
+                        <br>
                         <button type="submit" style="border-radius: 10px;margin-top: 50px;" class="btn btn-block btn-outline-primary">Submit</button>
                         <input class="btn-block btn-outline-secondary" style="border-radius: 10px;padding: 5px; margin-top: 20px;"  type="button" value="Back" onclick="history.back()"/> 
                       {% else %}
@@ -263,7 +263,7 @@ table {
       if(check)
       document.getElementById('mycontent').style.display = "block";
     }
-    else
+    else if($(window).width() < 690)
     {
       document.getElementById('mycol22').style.display="none";
       document.getElementById('mycontent').style.display="none";
