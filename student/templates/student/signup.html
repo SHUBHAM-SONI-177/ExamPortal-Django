@@ -11,7 +11,7 @@
     <div class="container">
       <div class="red" style="text-align: center;"> 
           <p>Register:</p>
-           </div>
+      </div>
      <form id="regForm" action="login2" method="POST"  enctype="multipart/form-data"  class="shadow-lg" style="border-radius: 30px;">
       {% csrf_token %}
 	<div class="tab"><h1>Login Info:</h1>
@@ -51,6 +51,7 @@
     <img id="myimage" style="cursor: pointer;" onclick="myfunction()" class="rounded-circle" width="200" src="https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg">
   </div>
   <input style="display: none;" type="file" id="avatar" name="profilePic" accept="image/png, image/jpeg">
+  <br>
   <label for="name"><b>Enter Full Name</b></label>
   <input type="text" placeholder="Enter Name" name="name" required>
 </div>
@@ -282,6 +283,19 @@ $('input[name=email]').keyup(function () {
             valid = false;
         }
 });
+function readURL(input){
+    if (input.files && input.files[0]){
+      var reader = new FileReader();
+      reader.onload = function (e){
+          $('#myimage').attr('src', e.target.result);
+      }
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  $("#avatar").change(function(){
+    readURL(this);
+  });
   </script>
   <style>
     @media screen and (max-width: 680px){
@@ -304,7 +318,7 @@ $('input[name=email]').keyup(function () {
     }
 }
     #regForm {
-  margin: 100px auto;
+  margin: 50px auto;
   padding: 40px;
   width: 70%;
   min-width: 300px;
