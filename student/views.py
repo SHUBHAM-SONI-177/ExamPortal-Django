@@ -32,8 +32,14 @@ from .forms import SetPasswordForm
 
 params={'slogin':False,'flogin':False,'alogin':False,'loggedin':False,'loguser':'None'}
 def index(request):
+    if request.session.get('slogin',False):
+        return HttpResponseRedirect('/student/studentpage')
+    if request.session.get('flogin',False):
+        messages.error(request,"you are already login as faculty")
+        return HttpResponseRedirect('/faculty/facultypage')
     global params
     return render(request,'student/index.html',params)
+    
 def signup(request):
     global params
     if not request.session.get('loggedin',False) :

@@ -1,0 +1,31 @@
+{%extends 'faculty/basic.html' %}
+{% block  title %} Number of Question
+{% endblock %}
+{% block body %}
+<div class="container shadow-lg" style="padding: 50px;margin: 50px auto;">
+  <form method="POST" action="saveQuestion" enctype="multipart/form-data">
+  {% csrf_token %}
+      <input type="text" class="form-control" name="paperID"  placeholder="paperID" required><br>
+      <input type="text" class="form-control" name="paperTag"  placeholder="question paper Tag">
+      {% for i in range %}
+      <br>
+      <br>
+      <h3>Question Number {{forloop.counter}}</h3>
+      <br>
+      <div>
+      <textarea type="text" class="form-control" name="qText{{i}}"  placeholder="Question Text" required></textarea><br>
+      <input type="file" name="qImage{{i}}"  placeholder="Question Image">
+      <br><br>
+      <input type="text" class="form-control" name="A{{i}}"  placeholder="Option A" required><br>
+      <input type="text" class="form-control" name="B{{i}}"  placeholder="Option B" required><br>
+      <input type="text" class="form-control" name="C{{i}}"  placeholder="Option C" required><br>
+      <input type="text" class="form-control" name="D{{i}}"  placeholder="Option D" required><br>
+      <input type="text" class="form-control" name="R{{i}}"  placeholder="Option right" required><br>
+      <input type="text" class="form-control" name="M{{i}}"  placeholder="question Marks">
+      </div>
+      <br>
+      {% endfor %}
+  <button class="btn btn-primary" type="submit">submit</button>
+  </form>
+  </div>
+{% endblock %}

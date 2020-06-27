@@ -27,6 +27,11 @@ from django.core.mail import EmailMessage
 import re
 
 def index(request):
+    if request.session.get('slogin',False):
+        messages.error(request,"you are already login as student")
+        return HttpResponseRedirect('/student/studentpage')
+    if request.session.get('flogin',False):
+        return HttpResponseRedirect('/faculty/facultypage')
     params={}
     return render(request,'faculty/index.html',params)
 
@@ -362,6 +367,68 @@ def seeQuestionPaper(request):
         messages.error(request, 'first you should login then only you can see the questions')
         return HttpResponseRedirect('facultylogin',params)
 
+
+def numberOfQuestion(request):
+    if request.session.get('flogin',False):
+        return render(request,'faculty/numberOfQuestion.html')
+
+
+def handleNumberOfQuestion(request):
+    if request.method=="POST":
+        noq1=request.POST.get('noq')
+        noq2=int(noq1)
+        request.session['noq']=noq2
+        if noq2>0:
+            return render(request,'faculty/newInputQuestion.html',{"range":range(noq2)})
+        else:
+            return HttpResponse("Invalid number of question")
+    else:
+        return HttpResponse("Invalid Request")
+
+def saveQuetion(request):
+    if request.method=="POST":
+        noq=request.session.get('noq')
+        paperID=request.POST.get('paperID','none')
+        paperTag=request.POST.get('paperTag','none')
+        if paperID=='none':
+            return HttpResponse('invalid paper ID')
+        try:
+            tquestionpaper=questionPaper.objects.get(paperID=paperID)
+            tquestionpaper.questionTag=paperTag
+            tquestionpaper.save()
+        except:
+            tquestionpaper=questionPaper(paperID=paperID,questionTag=paperTag)
+            tquestionpaper.save()
+        tquestionpaper=questionPaper.objects.get(paperID=paperID)
+        for i in range(noq):
+            qtext="qText"+str(i)
+            qImage="qImage"+str(i)
+            A="A"+str(i)
+            B="B"+str(i)
+            C="C"+str(i)
+            D="D"+str(i)
+            R="R"+str(i)
+            M="M"+str(i)
+            qtextVal=request.POST.get(qtext,'none')
+            qimageVal=request.FILES.get(qImage,'none')
+            AVal=request.POST.get(A,'none')
+            BVal=request.POST.get(B,'none')
+            CVal=request.POST.get(C,'none')
+            DVal=request.POST.get(D,'none')
+            RVal=request.POST.get(R,'none')
+            MVal=request.POST.get(M,'none')
+            if(AVal!='none' and BVal!='none' and CVal!='none' and DVal!='none' and RVal!='none' and qtextVal!='none'):
+                tquestion=question(paperID=tquestionpaper,questionText=qtextVal,option1=AVal,option2=BVal,option3=CVal,option4=DVal,rightOption=RVal)
+                if MVal!='none':
+                    tquestion.questionMarks=int(MVal)
+                    tquestion.save()
+                if qimageVal!='none':
+                    tquestion.questionImage=qimageVal
+                    tquestion.save()  
+        messages.success(request,'Uploaded Successfully')
+        return HttpResponseRedirect("facultypage")
+    else:
+        return HttpResponse("invalid request")
 
 
 

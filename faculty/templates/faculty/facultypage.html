@@ -25,23 +25,41 @@
               <button class="tablink" title="Set Live Paper" onclick="openPage('livepaper', this, 'orange')">Set Live Paper</button>
 
               <div id="mycontent" style="text-align: center; max-height: 500px;margin: 100px;">
-                <img src="https://kennedalenews.com/clients/kennedalenews/8-15-2017-5-22-53-PM-3945018.jpg" height="350" width="500">
+                <img src="https://kennedalenews.com/clients/kennedalenews/8-15-2017-5-22-53-PM-3945018.jpg" height="500" width="700">
               </div>
 
               <div class="tabcontent" id="inputquestion">
-                  <div class="container shadow-lg" style="padding: 20px;margin: 50px auto;">
-                    <div class="row">
-                        <div class="col-md-3 col-sm-1"></div>
-                        <div class="col-md-6 col-sm-12">
-                            <form method="POST" enctype="multipart/form-data" style="text-align: right;color: black;">
-                                {% csrf_token %}
-                                {{ form1.as_p }}
-                                <input class="btn-primary rounded" type='submit' value='save' name="form1submit"/>
-                            </form>
-                        </div>
-                        <div class="col-md-3 col-sm-1"></div>
+                <div class="container shadow-lg" style="padding: 20px;margin: 20px auto;">
+                  <div class="row">
+                    <div class="col-md-3 col-sm-1"></div>
+                    <div class="col-md-6 col-sm-12">
+                      <form method="POST" enctype="multipart/form-data" style="text-align: right;color: black;">
+                        {% csrf_token %}
+                        {{ form1.as_p }}
+                        <input class="btn-primary rounded" type='submit' value='save' name="form1submit"/>
+                      </form>
                     </div>
+                    <div class="col-md-3 col-sm-1"></div>
                   </div>
+                </div>
+                <h1 style="text-align: center;color: black;">OR</h1>
+                <div class="container shadow-lg" style="padding: 20px;margin: 20px auto;">
+                  <div class="row">
+                    <div class="col-md-3 col-sm-1"></div>
+                    <div class="col-md-6 col-sm-12">
+                      <form action="handleNumberOfQuestion" method="POST" style="text-align: right;color: black;">
+                        {% csrf_token %}
+                        <div>
+                          <label for="exampleInputEmail1">Number of question</label>
+                          <input type="integer" class="form-control" name="noq" aria-describedby="emailHelp" placeholder="Number of question">
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                      </form>
+                    </div>
+                    <div class="col-md-3 col-sm-1"></div>
+                  </div>
+                </div>
               </div>
 
               <div id="StudyMaterial" class="tabcontent">

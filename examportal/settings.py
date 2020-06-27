@@ -129,10 +129,6 @@ STATIC_URL = '/static/'
 MESSAGE_TAGS = {
     messages.ERROR: 'danger'
 }
-'''
-parent_dir = os.path.abspath(os.path.dirname(__file__) + '/..')
-MEDIA_ROOT = os.path.join(parent_dir, 'media/')
-MEDIA_URL = '/media/'''
 
 AWS_ACCESS_KEY_ID = 'AKIASJQUCNV3UVPYKBH2'
 AWS_SECRET_ACCESS_KEY = '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'
