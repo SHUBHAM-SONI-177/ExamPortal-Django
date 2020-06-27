@@ -47,15 +47,15 @@
               <div id="StudyMaterial" class="tabcontent">
                   <div class="container">
                     <div class="row">
-                        <div class="col-sm-3 col-md-3 col-xs-12"></div>
-                        <div class="col-sm-6 col-md-6 col-xs-12 shadow-lg" style="padding: 50px;color: black">
+                        <div class="col-sm-3 col-md-3 col-xs-1"></div>
+                        <div class="col-sm-6 col-md-6 col-xs-10 shadow-lg" style="padding: 20px;color: black">
                             <form method="POST" enctype="multipart/form-data" style="text-align: right;">
                                 {% csrf_token %}
                                 {{form.as_p }}
                                 <input class="btn-outline-primary btn-block" type='submit' value='save' name="studymaterialsubmit"/>
                             </form>
                         </div>
-                        <div class="col-sm-3 col-md-3 col-xs-12"></div>
+                        <div class="col-sm-3 col-md-3 col-xs-1"></div>
                     </div>
                 </div>
               </div>
@@ -256,19 +256,6 @@ table {
 </style>
 <script type="text/javascript">
   var check = true;
-  window.addEventListener("resize", myFunction);
-  function myFunction(){
-    if($(window).width() > 690){
-      document.getElementById('mycol22').style.display = "block";
-      if(check)
-      document.getElementById('mycontent').style.display = "block";
-    }
-    else if($(window).width() < 690)
-    {
-      document.getElementById('mycol22').style.display="none";
-      document.getElementById('mycontent').style.display="none";
-    }
-  }
   function mynewfunction(){
     if(document.getElementById('mycol22').style.display != "block"){
         document.getElementById('mycol22').style.display = "block";
