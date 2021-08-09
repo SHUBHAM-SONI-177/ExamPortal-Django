@@ -1,0 +1,57 @@
+{% extends 'faculty/basic.html' %}
+{% block title %} Student {% endblock%}
+
+{%block body %}
+<div class="container shadow-lg" style="border-radius: 20px;margin-bottom: 100px;margin-top: 100px;padding: 50px;">
+  {% csrf_token %}
+  {% for obj in q %}
+  {% load static %}
+  <p class="text-body" style="text-align: left;">Question-{{forloop.counter}}. {{obj.questionText}}</p>
+  {% if obj.questionImage %}
+  <div class="conatiner">
+    <div class="row">
+      <div class="col-2"></div>
+      <div class="col-8">
+    <img src="{{ obj.questionImage.url }}">
+  </div>
+    <div class="col-2"></div>
+    </div>
+  </div>
+  <br><br>
+  {% endif %}
+  <div class="mb-3" style="margin-left: 20px;">
+    <label class="text-body" for="aca-{{obj.qid}}">Option1 &emsp;&emsp; {{obj.option1}}</label>
+  </div>
+  <div   class="mb-3" style="margin-left: 20px;">
+    <label class="text-body" for="acb-{{obj.qid}}">Option2 &emsp;&emsp; {{obj.option2}}</label>
+   
+  </div>
+  <div   class="mb-3" style="margin-left: 20px;">
+      <label class="text-body" for="acc-{{obj.qid}}">Option3 &emsp;&emsp; {{obj.option3}}</label>
+      
+    </div>
+    <div class="mb-3" style="margin-left: 20px;">
+      <label class="text-body" for="acd-{{obj.qid}}">Option4 &emsp;&emsp; {{obj.option4}}</label>
+      
+    </div>
+    <br><br>
+ 
+  
+    {% endfor %} 
+
+    
+
+    <input class="btn-block btn-outline-secondary" style="border-radius: 10px;"  type="button" value="back" onclick="history.back()"/> 
+    </div>
+<style>
+      img{
+        width: 100%;
+    height: 100%;
+    max-width: 600px;
+    max-height: 300px;
+    display: block;/* remove extra space below image */
+
+}
+}
+</style>
+{% endblock%}

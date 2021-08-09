@@ -1,0 +1,60 @@
+{%extends 'student/basic.html' %}
+{% block  title %}
+{% endblock %}
+{% block  css %}
+
+    
+{% endblock %}
+{% block  body %}
+
+<div class="container rounded shadow-lg">
+    <h1 style="border-bottom: 2px solid black;text-align: center;">Leader Board</h1>
+    <br><br>
+    <table class="table table-striped table-dark">
+        <thead>
+          <tr>
+            <th scope="col"><p style="font-size: x-large;">Rank</p></th>
+            <th scope="col"><p style="font-size: x-large;">Name</p></th>
+            <th scope="col"><p style="font-size: x-large;">PaperID</p></th>
+            <th scope="col"><p style="font-size: x-large;">Marks</p></th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for obj in leaders %}
+                <tr>
+                    <td class="counterCel"></td>
+                    <td><p style="font-size: large;">{{obj.studentID_id}} </p></td>
+                    <td><p style="font-size: large;">{{obj.paperID_id}}</p></td>
+                    <td><p style="font-size: large;">{{obj.studentMarks}}</p></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+</div>
+<style>
+     table {
+    counter-reset: tableCount;     
+}
+.counterCel:before {              
+    content: counter(tableCount); 
+    counter-increment: tableCount; 
+}
+@media screen and (min-width: 250px) and (max-width: 768px){
+    .container{
+        padding: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        margin-top: 100px;
+        margin-bottom: 50px;
+    }
+}
+
+@media screen and (min-width: 769px){
+    .cotainer{
+        padding: 50px;
+        margin: 100px;
+    }
+}
+</style>
+
+{% endblock %}

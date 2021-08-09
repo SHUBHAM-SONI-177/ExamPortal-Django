@@ -1,0 +1,69 @@
+{% extends 'student/basic.html' %}
+{% block title %} Student {% endblock%}
+
+{%block body %}
+
+<html>
+    <body>
+        <div class="container" style="text-align: center;">
+            <div class="row">
+                <div class="col-sm-1 col-md-1 col-xs-12"></div>
+                <div class="col-sm-5 col-md-5 col-xs-12" style="margin-top: 200px;margin-bottom: 100px;text-align: center;">
+                    <div class="card" style="border-radius: 30px; width: 100%;min-height: 410px;">
+                        <div class="card-header">
+                            LOGIN
+                          </div>
+                        <img class="card-img-top" src="https://jihamedia.s3.ap-southeast-1.amazonaws.com/4.jpg" alt="Card image cap">
+                        <div class="card-body">
+                            <h5 class="card-title">Student</h5>
+                            <p class="card-text">If you have an account on this portal, you can login here</p>
+                            <a style="border-radius: 30px;" class="btn btn-block btn-outline-primary mytext" href="studentlogin"><b>LOGIN/SIGN IN</b></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-5 col-md-5 col-xs-12" style="margin-top: 200px;margin-bottom: 100px;text-align: center;">
+                    <div class="card" style="border-radius: 30px; width: 100%;min-height: 410px;">
+                        <div class="card-header">
+                            SIGN UP
+                          </div>
+                        <img class="card-img-top" src="https://jihamedia.s3.ap-southeast-1.amazonaws.com/4.jpg" alt="Card image cap">
+                        <div class="card-body">
+                            <h5 class="card-title">Student</h5>
+                            <p class="card-text">Have you not yet signup? let's signup and get started</p>
+                            <a style="border-radius: 30px;" class="btn btn-block btn-outline-primary mytext" href="signup"><b>SIGN UP</b></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-1 col-md-1 col-xs-12"></div>
+            </div>
+        </div>
+    </body>
+    <style>
+        a.mytext {
+      text-underline-position: below;
+      text-align: center;
+        display: inline-block;
+    }
+        body{
+            background-image: url(https://jihamedia.s3.ap-southeast-1.amazonaws.com/8.jpg);
+            background-size: cover;
+            
+        }
+        @media screen and (max-width: 1000px;)
+        {
+            .row{
+                flex-flow: column;
+            }
+            body{
+                max-height: 800px;
+                max-width: 100%;
+            }
+            .card{
+                margin: 0px;
+                width: 100%;
+            }
+        }
+    </style>
+</html>
+
+{% endblock%}

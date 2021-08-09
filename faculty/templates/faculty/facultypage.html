@@ -1,0 +1,310 @@
+{% extends 'faculty/basic.html' %}
+{% block title %} faculty {% endblock%}
+
+{%block body %}
+
+
+
+<html>
+  <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-12 mycol" style="text-align: center;">
+                <br>
+                <br>
+                  <img title="Profile Photo" class="rounded-circle" src="{{ profile.profilePic.url }}" width="300" height="300" onerror="this.src='https://jihamedia.s3.ap-southeast-1.amazonaws.com/1.png';"><br><br>
+                <p style="color: black;">Name: {{profile.name}} </p><br>
+                <a id="mynewbtn" class="mytext btn btn-block btn-outline-primary" onclick="mynewfunction()" style="cursor: pointer; height: 50px;text-align: center;"><b title="otherfunction">Other function</b></a>
+                <a class="mytext btn btn-block btn-outline-success" href="viewProfile" style="height: 50px;text-align: center;"><b title="ViewProfile">MY PROFILE</b></a>
+                <a class="mytext btn btn-block btn-outline-info" onclick="openPage('inputquestion', this, 'blue')" style="height: 50px;text-align: center;"><b title="Want to add questions">Input Question</b></a>
+                <a id="mylogbtn" class="mytext btn btn-block btn-outline-danger" href="facultylogout" style="height: 50px;text-align: center;"><b title="Logout">LOGOUT</b></a>
+            </div>
+            <div class="col-xl-9 col-lg-9 col-md-8 col-sm-12 mycol2" id="mycol22">
+              <button class="tablink" title="UploadStudyMaterial" onclick="openPage('StudyMaterial', this, 'red')">UploadStudyMaterial</button>
+              <button class="tablink" title="Set Quiz Duration" onclick="openPage('quizduration', this, 'blue')">Set Quiz Duration</button>
+              <button class="tablink" title="See Available ExamPapers" onclick="openPage('availablepapers', this, 'orange')">See Available ExamPapers</button>
+              <button class="tablink" title="Set Live Paper" onclick="openPage('livepaper', this, 'orange')">Set Live Paper</button>
+
+              <div id="mycontent" style="text-align: center; max-height: 500px;margin: 100px;">
+                <img src="https://jihamedia.s3.ap-southeast-1.amazonaws.com/2.png" height="500" width="700">
+              </div>
+
+              <div class="tabcontent" id="inputquestion">
+                <div class="container shadow-lg" style="padding: 20px;margin: 20px auto;">
+                  <h3 style="text-align: center;color: black;">To add question on previos Question Paper</h3>
+                  <div class="row">
+                    <div class="col-md-3 col-sm-1"></div>
+                    <div class="col-md-6 col-sm-12">
+                      <form method="POST" enctype="multipart/form-data" style="text-align: right;color: black;">
+                        {% csrf_token %}
+                        {{ form1.as_p }}
+                        <input class="btn-primary rounded" type='submit' value='save' name="form1submit"/>
+                      </form>
+                    </div>
+                    <div class="col-md-3 col-sm-1"></div>
+                  </div>
+                </div>
+                <div class="container shadow-lg" style="padding: 20px;margin: 20px auto;">
+                  <h3 style="text-align: center;color: black;">For new Question Paper</h3>
+                  <div class="row">
+                    <div class="col-md-3 col-sm-1"></div>
+                    <div class="col-md-6 col-sm-12">
+                      <form action="handleNumberOfQuestion" method="POST" style="text-align: right;color: black;">
+                        {% csrf_token %}
+                        <div>
+                          <label for="exampleInputEmail1">Number of question</label>
+                          <input type="integer" class="form-control" name="noq" aria-describedby="emailHelp" placeholder="Number of question">
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                      </form>
+                    </div>
+                    <div class="col-md-3 col-sm-1"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="StudyMaterial" class="tabcontent">
+                  <div class="container">
+                    <div class="row">
+                        <div class="col-sm-3 col-md-3 col-xs-1"></div>
+                        <div class="col-sm-6 col-md-6 col-xs-10 shadow-lg" style="padding: 20px;color: black">
+                            <form method="POST" enctype="multipart/form-data" style="text-align: right;">
+                                {% csrf_token %}
+                                {{form.as_p }}
+                                <input class="btn-outline-primary btn-block" type='submit' value='save' name="studymaterialsubmit"/>
+                            </form>
+                        </div>
+                        <div class="col-sm-3 col-md-3 col-xs-1"></div>
+                    </div>
+                </div>
+              </div>
+
+              <div id="quizduration" class="tabcontent">
+                <div class="container shadow-lg rounded" style="padding: 50px;">
+                  <form method="POST" action="handleSetQuizTime">
+                    {% csrf_token %}
+                      <div class="form-group">
+                        <label style="color: black;" for="exampleInputEmail1">PaperID</label>
+                        <input name="paperID" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter paperID">
+                      </div>
+
+                      <div class="form-group">
+                        <label for="exampleInputPassword1">Enter Paper Duration</label>
+                        <input name="ashu_time" type="number" class="form-control" id="exampleInputPassword1" placeholder="Please Enter Duration time in minutes">
+                      </div><br><br>
+                      
+                      <button type="submit" class="btn btn-block btn-primary">Submit</button>
+                    </form>
+                  </div>
+              </div>
+
+              <div id="availablepapers" class="tabcontent">
+                <div class="container shadow-lg" style="padding: 20px;">
+                  {% if paperID %}
+                  <h3 style="text-align: center;border-bottom: 2px solid blueviolet;color: black;">ALL AVAILABLE PAPERS</h3><br><br><br>
+                  {% endif %}
+                <form class="was-validated" action="seeQuestionPaper" method="POST">
+                    {% csrf_token %}
+                    {% if paperID %}
+                        <div style="overflow-x:auto;">
+                            <table class="table table-striped table-light table-resposive-sm">
+                              <thead>
+                              <tr>
+                                <th scope="col">Sno.</th>
+                                <th scope="col">PaperID</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            {% for obj in paperID %}
+                             <tr> 
+                                <td class="counterCe"></td>
+                                <td>
+                                  <div class="custom-control custom-radio" style="text-align: left; margin-left: 45%;">
+                                    <input value="{{obj}}" type="radio" class="custom-control-input" id="{{forloop.counter}}" name="paperID" required>
+                                    <label class="custom-control-label font-weight-bold text-body" for="{{forloop.counter}}">{{obj}}</label>
+                                  </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+                        <br>
+                        <button type="submit" style="border-radius: 10px;margin-top: 50px;" class="btn btn-block btn-outline-primary">Submit</button>
+                        <input class="btn-block btn-outline-secondary" style="border-radius: 10px;padding: 5px; margin-top: 20px;"  type="button" value="Back" onclick="history.back()"/> 
+                      {% else %}
+                      <strong style="color: black;">No data to show</strong>
+                      {% endif %}
+                  </form>
+                </div>
+              </div>
+
+              <div id="livepaper" class="tabcontent">
+                <div class="container rounded shadow-lg" style="padding: 50px;">
+                <form method="POST" action="handleSetLiveExamPaper">
+                  {% csrf_token %}
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">PaperID</label>
+                      <input name="paperID" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter paperID">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="exampleInputPassword1">Enter Paper Time</label>
+                      <input name="ashu_time" type="time" class="form-control" id="exampleInputPassword1" placeholder="Enter Time">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword2">Enter Paper Date</label>
+                        <input name="ashu_date" type="date" class="form-control" id="exampleInputPassword2" placeholder="Enter date">
+                      </div>
+                    <br>
+                    <button type="submit" class="btn btn-block btn-primary">Submit</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+        
+    </body>
+    <style>
+      @media screen and (max-width: 680px){
+        .mycol{
+          padding-bottom: 60px;
+          margin-bottom: 0px;
+        }
+        .mycol2{
+          display: none;
+        }
+        .tablink{
+          height: 50px;
+          margin-bottom: 10px;
+          width: 100%;
+        }
+        .tabcontent {
+          margin-top: 150px;
+          margin-bottom: 10px;
+        }
+        #mynewbtn{
+          display: block;
+        }
+        #mylogbtn{
+          display: none;
+        }
+        #mycontent{
+          display: none;
+        }
+
+    }
+    @media screen and (min-width: 689px){
+        .mycol{
+          padding-bottom: 8%;
+          margin-bottom: 0px;
+          background-color:none;
+        }
+        .mycol2{
+          display: block;
+        }
+        .tablink{
+          height: 50px;
+          width: 25%;
+        }
+        .tabcontent {
+          margin-top: 5%;
+        }
+        #mynewbtn{
+          display: none;
+        }
+        #mylogbtn{
+          display: block;
+        }
+        #mycontent{
+          display: block;
+        }
+    }
+
+
+  a.mytext {
+      text-underline-position: below;
+      font-style: italic;
+      font: outline;
+      text-align: center;
+    display: inline-block;
+    }
+        body{
+            
+            background-size: cover;
+        }
+        
+
+/* Style tab links */
+.tablink {
+  background-color: #555;
+  color: white;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  
+  text-overflow: hidden;
+  overflow: hidden;
+  word-wrap: break-word;
+}
+
+.tablink:hover {
+  background-color: #777;
+}
+
+/* Style the tab content (and add height:100% for full page content) */
+.tabcontent {
+  color: white;
+  display: none;
+  padding: 100px 20px;
+  height: 50%;
+  text-align: center;
+  border-radius: 20px;
+}
+table {
+    counter-reset: tableCount;     
+}
+.counterCe:before {              
+    content: counter(tableCount); 
+    counter-increment: tableCount; 
+}
+
+</style>
+<script type="text/javascript">
+  var check = true;
+  function mynewfunction(){
+    if(document.getElementById('mycol22').style.display != "block"){
+        document.getElementById('mycol22').style.display = "block";
+        document.getElementById('mycol22').scrollIntoView({ behavior: 'smooth'});
+      }
+      else
+      {
+        document.getElementById('mycol22').style.display="none";
+      }
+  }
+  function openPage(pageName, elmnt, color) 
+  {
+    check = false;
+    var i, tabcontent, tablinks;
+    document.getElementById('mycol22').style.display = "block";
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablink");
+    document.getElementById('mycontent').style.display="none";
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].style.backgroundColor = "";
+    }
+    document.getElementById(pageName).style.display = "block";
+      document.getElementById(pageName).scrollIntoView({ behavior: 'smooth'});
+      elmnt.style.backgroundColor = "#777";
+  }
+</script>
+</html>
+
+
+{% endblock%}

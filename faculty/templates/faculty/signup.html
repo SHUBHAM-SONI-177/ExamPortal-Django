@@ -1,0 +1,240 @@
+{% extends 'faculty/basic.html' %}
+{% block title %} Faculty-Sign Up {% endblock%}
+{% block css %} 
+
+
+ {%endblock %}
+{%block body %}
+
+
+
+<html>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-2 col-md-2 col-xs-12"></div>
+        <div class="col-sm-8 col-md-8 col-xs-12">
+          <div class="red" style="text-align: center;">
+          <p>SIGN&nbsp;UP</p>
+          </div>
+  <form class="myform shadow-lg" action="login2" method="POST" enctype="multipart/form-data" style="border-radius: 30px; border:1px solid #ccc">
+  {% csrf_token %}
+    <div class="container">
+      <br>
+      <div style="text-align: center;">
+      <h3 class="text-danger" >Please fill in this form to create an account</h3>
+      </div>
+      <br>
+      <hr>
+      <div class="box">
+            <label for="name"><b>Name</b></label>
+            <input type="text" placeholder="Enter Name" name="name" required>
+      </div>
+      <br>
+      <div class="box">
+        <label for="address"><b>Address</b></label>
+        <input type="text" placeholder="Enter Address" name="address" required>
+      </div>
+      <br>
+      <div class="box">
+        <label for="dob"><b>Date of Birth</b></label>
+        <input type="date" placeholder="Enter Date of Birth" name="dob" required>
+        </div>
+      <br>
+      {% if flag2 %}
+      <br>
+      <div class="alert alert-danger" role="alert">
+       User already exists with this Email
+     </div>
+     <br>
+     <br>
+     {% endif %}
+     <div class="box">
+      <label for="email"><b>Email</b></label>
+      <input type="email" placeholder="Enter Email" name="email" required> <b id=email_hint></b>
+      </div>
+      <br>
+      <div class="box">
+      <label for="password"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="password" required><i title="Password must contain one lower,one upper, one numeric and one special character" class="fa fa-exclamation-circle"></i><b id=pass_hintt></b>
+      </div>
+
+      {% if flag %}
+ <div class="alert alert-danger" role="alert">
+  password didnt match
+</div>
+{% endif %}
+<br>
+      <div class="box">
+      <label for="repeat_password"><b>Repeat Password</b></label>
+      <input type="password" placeholder="Repeat Password" name="repeat_password" required><b id=pass_hint></b>
+      </div>
+      <div class="box">
+        <br>
+      <label for="profilePic">Choose photo:</label>
+       <input type="file"
+       id="avatar" name="profilePic"
+       accept="image/png, image/jpeg">
+       </div>
+      <label>
+        <br>
+      </label>
+      <br>  
+        <br><br>
+        <div style="text-align: center;"><p>Already a User?  <a  style="color: blue;" href="facultylogin">LOGIN</a></p></div>
+        <button  type="button" class="signupbtn btn btn-block btn-outline-primary" data-toggle="modal" data-target="#exampleModalCenter">Sign Up</button>
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Once saved cannot be changed</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                  Please Ensure that all data filled by you are correct as per your knowledge
+              </div>
+              <div class="modal-footer">
+                <div class="clearfix">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="signupbtn btn btn-primary">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </form>
+  </div>
+  <div class="col-sm-2 col-md-2 col-xs-12"></div>
+  </div>
+</div>
+  </body>
+  <style>
+    @media screen and (max-width: 450px){
+    .red p{
+            margin-top: 20%;
+            background-color: blanchedalmond;
+            width: 100%;
+            font-size: xx-large;
+            border-radius: 30px;
+    }
+    .box input{
+          width: 100%;
+          font-size: 20px;
+          font-style: oblique;
+          color: black;
+    }
+    .box label{
+        text-align: left;
+    }
+  }
+  @media (min-width: 768px) { 
+    .red p{
+            background-color: blanchedalmond;
+            width: 40%;
+            margin-left: 30%;
+            font-size: xx-large;
+            border-radius: 30px;
+    }
+}
+@media (min-width: 992px) { 
+    .red p{
+            background-color: blanchedalmond;
+            width: 40%;
+            margin-left: 30%;
+            font-size: xx-large;
+            border-radius: 30px;
+    }
+}
+@media (min-width: 1200px) { 
+    .red p{
+            margin-top: 10%;
+            background-color: blanchedalmond;
+            width: 40%;
+            margin-left: 30%;
+            font-size: xx-large;
+            border-radius: 30px;
+    }
+}
+    form.myform{
+      padding-bottom: 25px;
+      padding-right: 5px;
+      padding-top: 25px;
+      background-color: white;
+      margin-bottom: 5%;
+    }
+    body{
+      background-color: white;
+      background-size: cover;
+      text-shadow: black;
+    }
+   
+    label{
+      width: 240px;
+      display: inline-block;
+      text-align: right;
+    }
+  </style>
+
+
+  <script type="text/javascript">
+    $('input[name=repeat_password]').keyup(function () {
+    'use strict';
+
+    if ($('input[name=password]').val() === $(this).val()) {
+        $('#pass_hint').html('<i class="fa fa-check"></i> Matched');
+        document.getElementById("pass_hint").style.color = "blue";
+        this.setCustomValidity('');
+    } else {
+        $('#pass_hint').html('<i class="fa fa-times"></i> Not matching');
+        this.setCustomValidity('Passwords must match');
+        document.getElementById("pass_hint").style.color = "red";
+    }
+});
+$('input[name=email]').keyup(function () {
+    'use strict';
+
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (re.test($(this).val())) {
+        $('#email_hint').html('<i class="fa fa-check"></i> Valid');
+        document.getElementById("email_hint").style.color = "blue";
+        this.setCustomValidity('');
+    } else {
+        $('#email_hint').html('<i class="fa fa-times"></i> Not valid');
+        document.getElementById("email_hint").style.color = "red";
+        this.setCustomValidity('Should be valid email');
+    }
+});
+// var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+// var mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
+
+    $('input[name=password]').keyup(function () {
+        'use strict';
+        var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+        var mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
+
+        if (strongRegex.test($(this).val())) 
+        {
+            $('#pass_hintt').html('<i class="fa fa-check"></i> Strong Password');
+            document.getElementById("pass_hintt").style.color = "blue";
+            this.setCustomValidity('');
+        }
+        else if(mediumRegex.test($(this).val()))
+        {
+              $('#pass_hintt').html('Medium Password');
+              document.getElementById("pass_hintt").style.color = "yellow";
+              this.setCustomValidity('');
+        }
+        else 
+        {
+            $('#pass_hintt').html('Easy Password');
+            this.setCustomValidity('Passwords must be strong');
+            document.getElementById("pass_hintt").style.color = "red";
+        }
+});
+  </script>
+</html>
+{% endblock%}

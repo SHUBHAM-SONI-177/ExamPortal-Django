@@ -1,0 +1,413 @@
+{% extends 'student/basic.html' %}
+{% block title %} StudentPage {% endblock%}
+
+{%block body %}
+
+<div class="modal fade modal fade bd-example-modal-lg" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" >
+  <div class="modal-dialog model-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">STUDY MATERIAL</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="font-size: larger;overflow-x:auto;">
+        {% if books %}
+        <table class="table table-striped table-light table-resposive-sm" style="margin: 5px auto;">
+          <thead>
+            <tr>
+              <th scope="col"><p>Sno.</p></th>
+              <th scope="col"><p>MaterialTag</p></th>
+              <th scope="col"><p >Title</p></th>
+              <th scope="col"><p >Link</p></th>
+            </tr>
+          </thead>
+          <tbody>
+                {% for obj in books %}
+                    <tr>
+                      <td class="mycounter"></td>
+                      <td><p title="{{obj.materialTag}}" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;max-width: 10ch;">{{obj.materialTag}}</p></td>
+                      <td><p title="{{obj.title}}" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;max-width: 10ch;">{{obj.title}} </p> </td>
+                      <td><a href="{{obj.materialFile.url}}"><i class="fa fa-download"></i></a></td>
+                 </p>
+                  </tr>
+
+                {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+          <strong>No Downloads</strong>
+        {% endif %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Alert</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you Sure
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <a style="color: black;" class="btn btn-danger" href="studentlogout"><b title="Logout">LOGOUT</b></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="container-fluid myclass">
+  <div class="row">
+
+
+
+    <div class="col-lg-3 col-xl-3 col-md-5 col-sm-12 mycol" style="text-align: center;padding-top: 3%;">
+        <img title="Profile Photo" style="border: 2px solid;" class="rounded-circle" src="{{ profile.profilePic.url }}" width="200" height="200" onerror="this.src='https://jihamedia.s3.ap-southeast-1.amazonaws.com/1.png';"><br><br>
+        <p style="font-size: large;">Name: {{profile.name}} </p><br>
+        <button class="tablinks btn-outline-secondary" onclick="openCity(event, 'LeaderBoard')">LEADER BOARD</button>
+        <button class="tablinks btn-outline-secondary" data-toggle="modal" data-target="#exampleModalLong" title="StudyMaterial">STUDY MATERIAL</button>
+        <button class="tablinks btn-outline-secondary" onclick="openCity(event, 'Choosepaper')">CHOOSE PAPER</button>
+        <button class="tablinks btn-outline-secondary" onclick="openCity(event, 'liveexam')">LIVE EXAMS</button>
+        <a class="tablinks btn-outline-secondary btn" href="/student/viewProfile">MY PROFILE</a>
+        <button class="tablinks btn-outline-danger" id="mylogoutbtn" data-toggle="modal" data-target="#exampleModalCenter">LOGOUT</button>
+    </div>
+
+
+    <div class="col-xl-9 col-lg-9 col-md-7 col-sm-12 mycol2">
+      <div id="mycontent" style="margin: 50px;padding: 50px;overflow: scroll;max-height: 750px;" >
+        <img src="https://jihamedia.s3.ap-southeast-1.amazonaws.com/6.jpg" width="100%">
+        
+          <p>A person who never made a mistake never tried anything new.</p>
+          <strong>– Albert Einstein (more quotes)</strong>
+          <p>I can’t change the direction of the wind, but I can adjust my sails to always reach my destination.</p>
+
+              <strong>– Jimmy Dean</strong>
+
+          <p>Twenty years from now you will be more disappointed by the things that you didn’t do than by the ones you did do, so throw off the bowlines, sail away from safe harbor, catch the trade winds in your sails. Explore, Dream, Discover.</p>
+
+          <strong> – Mark Twain</strong>
+
+          <p>I’ve missed more than 9000 shots in my career. I’ve lost almost 300 games. 26 times I’ve been trusted to take the game winning shot and missed. I’ve failed over and over and over again in my life. And that is why I succeed.</p>
+
+          <strong> – Michael Jordan</strong>
+
+         <p> A winner is a dreamer who never gives up.</p>
+         <img src="https://jihamedia.s3.ap-southeast-1.amazonaws.com/7.jpg" width="100%">
+      </div>
+
+      <div id="LeaderBoard" class="tabcontent">
+        <div class="container shadow-lg rounded table-resposive" style="margin-top: 100px;margin-bottom: 100px;">
+          {% if paperID2 %}
+          <h1 style="text-align: center;border-bottom: 2px solid black;">Select available live exams</h1><br><br><br>
+          {% endif %}
+          <form class="was-validated" action="handleLeaderBoard" method="POST">
+            {% csrf_token %}
+            {% if paperID2 %}
+            <div style="overflow-x:auto;">
+              <table class="table table-striped table-dark table-resposive-sm">
+                <thead>
+                  <tr>
+                    <th scope="col">Sno.</th>
+                    <th scope="col">PaperID</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for obj in paperID2 %} 
+                    <tr>
+                      <td class="counterCe"></td>
+                      <td>
+                          <div class="custom-control custom-radio">
+                            <input  value="{{obj.paperID}}" type="radio" class="custom-control-input" id="{{forloop.counter}}" name="paperID" required>
+                            <label class="custom-control-label" for="{{forloop.counter}}">{{obj.paperID}}</label>
+                          </div>
+                      </td>
+                      <td><p>{{obj.paperDate}}</p></td>
+                      <td><p>{{obj.quizTime}}</p></td>
+                    </tr>
+                  {% endfor %} 
+                </tbody>
+              </table>
+            </div>
+            <button type="submit" class="btn btn-block btn-primary">Submit</button>
+            {% else %}
+            <strong>No data to show</strong>
+            {% endif %}
+            <br><br><br>
+          </form>
+        </div>
+      </div>
+
+      <div id="Choosepaper" class="tabcontent">
+        <div class="container shadow-lg rounded" style="padding: 20px; margin-top: 100px;margin-bottom: 100px;">
+          <form class="was-validated" action="attemptQuiz" method="POST">
+              {% csrf_token %}
+              {% if paperID %}
+              <h1 style="text-align: center;border-bottom: 2px solid black;">All Exam Papers</h1><br><br><br>
+              <div style="overflow-x:auto;">
+                  <table class="table table-striped table-resposive-sm">
+                    <thead>
+                    <tr>
+                      <th scope="col">Sno.</th>
+                      <th scope="col">PaperID</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for obj in paperID %}
+                   <tr>
+                      <td class="counterCe"></td>
+                      <td>
+                        <div class="custom-control custom-radio" style="text-align: left; margin-left: 45%;">
+                          <input value="{{obj}}" type="radio" class="custom-control-input" id="1{{forloop.counter}}" name="paperID1" required>
+                          <label class="custom-control-label font-weight-bold text-body" for="1{{forloop.counter}}">{{obj}}</label>
+                        </div>
+                      </td>
+                  </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              <br><br>
+              <button type="submit" class="btn btn-outline-primary btn-block">AttemptQuiz</button>
+            {% else %}
+            <strong>No data to show</strong>
+            {% endif %}
+            </form>
+          </div>
+      </div>
+      <div id="liveexam" class="tabcontent">
+        <div class="container shadow-lg rounded table-resposive" style="margin-top: 100px;margin-bottom: 100px;">
+          {% if paperID2 %}
+          <h1>All Live Exams Going On</h1>
+          {% endif %}
+        <form class="was-validated" action="liveAttemptQuiz" method="POST">
+            {% csrf_token %}
+            {% if paperID2 %}
+              <div style="overflow-x:auto;">
+                  <table class="table table-striped table-dark table-resposive-sm">
+                    <thead>
+                      <tr>
+                        <th scope="col">Sno.</th>
+                        <th scope="col">PaperID</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for obj in paperID2 %} 
+                        <tr>
+                          <td class="counterCe"></th>
+                          <td>
+                              <div class="custom-control custom-radio">
+                                <input  value="{{obj.paperID}}" type="radio" class="custom-control-input" id="2{{forloop.counter}}" name="paperID2" required>
+                                <label class="custom-control-label" for="2{{forloop.counter}}">{{obj.paperID}}</label>
+                              </div>
+                          </td>
+                          <td><p>{{obj.paperDate}}</p></td>
+                          <td><p>{{obj.quizTime}}</p></td>
+                        </tr>
+                      {% endfor %} 
+                    </tbody>
+                  </table>
+              </div>
+              <button type="submit" class="btn btn-block btn-primary">Submit</button>
+            {% else %}
+              <strong>No data to show</strong>
+            {% endif %}
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <style>
+      @media screen and (max-width: 450px){
+        .mycol{
+          padding-bottom: 100px;
+          margin-bottom: 0px;
+        }
+        .mycol2{
+          margin-bottom: 20px;
+        }
+        .tablinks{
+          height: 50px;
+        }
+        .table-resposive{
+          padding-left: : 10px;
+          padding-right: 10px;
+          padding-bottom: 50px;
+          padding-top: 50px;
+        }
+        #mylogoutbtn{
+          display: none;
+        }
+        #mycontent{
+          display: none;
+        }
+    }
+    @media (min-width: 768px) { 
+    .mycol{
+          padding-bottom: 100px;
+          margin-bottom: 100px;
+        }
+        .mycol2{
+          margin-bottom: 30%;
+        }
+        .tablinks{
+          height: 70px;
+        }
+        .table-resposive{
+          padding-left: : 15px;
+          padding-right: 15px;
+          padding-bottom: 50px;
+          padding-top: 50px;
+        }
+        #mylogoutbtn{
+          display: block;
+        }
+        #mycontent{
+          display: block;
+        }
+}
+@media (min-width: 992px) { 
+    .mycol{
+          padding-bottom: 15%;
+          margin-bottom: 0px;
+        }
+        .mycol2{
+          margin-bottom: 0px;
+          padding-bottom: 0px;
+        }
+        .tabcontent{
+          margin-top: 5%;
+          margin-bottom: 0px;
+        }
+        .table-resposive{
+          padding: 80px;
+        }
+        #mylogoutbtn{
+          display: block;
+        }
+        #mycontent{
+          display: block;
+        }
+}
+@media (min-width: 1200px) { 
+    .mycol{
+          padding-bottom: 100px;
+          margin-bottom: 0px;
+        }
+        .mycol2{
+          margin-bottom: 0px;
+          padding-bottom: 0px;
+        }
+        .tabcontent{
+          margin-top: 5%;
+          margin-bottom: 0px;
+        }
+        .tablinks{
+          height: 70px;
+        }
+        .table-resposive{
+          padding: 100px;
+        }
+        #mylogoutbtn{
+          display: block;
+        }
+        #mycontent{
+          display: block;
+        }
+}
+table{
+  overflow: scroll;
+}
+        a.mytext {
+      text-underline-position: below;
+      font: outline;
+      text-align: center;
+    display: inline-block;
+    }
+     table {
+    counter-reset: tableCount;     
+}
+.mycounter:before {              
+    content: counter(tableCount); 
+    counter-increment: tableCount; 
+}
+.counterCe:before {              
+    content: counter(tableCount); 
+    counter-increment: tableCount; 
+}
+.mycol{
+  height: 100%;
+}
+html,body{
+  height: 100%;
+}
+.tablinks {
+  display: block;
+  background-color: inherit;
+  color: black;
+  width: 100%;
+  height: 70px;
+  border-bottom: 1px solid grey;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+  background-color: darkgray;
+}
+
+.tablinks:hover {
+  background-color: #0006;
+}
+
+  .tab button.active {
+    background-color: #ccc;
+  }
+
+  .tabcontent 
+  {
+    text-align: center;
+    display: none;
+  }
+</style>
+
+<script type="text/javascript">
+  function openCity(evt, cityName) 
+  {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++){
+        tabcontent[i].style.display = "none";
+      }
+      document.getElementById('mycontent').style.display="none";
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++){
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+      document.getElementById(cityName).style.display = "block";
+      evt.currentTarget.className += " active";
+      if ($(window).width() < 768){
+        document.getElementById(cityName).scrollIntoView({ behavior: 'smooth'});
+      }
+  }
+</script>
+      
+
+
+{% endblock%}

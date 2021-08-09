@@ -1,0 +1,66 @@
+{% extends 'faculty/basic.html' %}
+{% block title %} Faculty {% endblock%}
+
+{%block body %}
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Update ProfilePic</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="myform" action="handleUpdateProfilePic" method="POST" class="shadow-lg"  enctype="multipart/form-data" style="padding: 50px;background-color: darkgray">
+          {% csrf_token %}
+          <label style="color: red;font-weight: 100;" for="profilePic">Choose a profile picture:</label><br><br>
+          <input type="file" id="avatar" name="profilePic" accept="image/png,image/jpeg">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="document.getElementById('myform').submit()">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+    <div class="row">
+      <div class="col-1"></div>
+      <div class="col-sm-12 col-md-10 col-xs-12 shadow-lg" style="background-color: darkgray; border-radius: 20px; margin-top: 5%; text-align: center;padding-top: 100px;margin-bottom: 100px; padding-bottom: 50px;">
+        <div class="row">
+          <div class="col">
+            <img src="{{ profile.profilePic.url }}" width="200" height="200" onerror="this.src='https://jihamedia.s3.ap-southeast-1.amazonaws.com/1.png';">
+            <br><br>
+            <h3>Name: {{profile.name}} </h3>
+            <a title="Edit Profile" href="" data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-pencil-square fa-2x"></i></a>
+          </div>
+          <div class="col" style="text-align: center;">
+            <p style="font-size: large;">Email: {{profile.email}} </p><br>
+            <p style="font-size: large;">Address: {{profile.address}}</p><br>
+            <p style="font-size: large;">Date of Birth: {{profile.dob}}</p><br>
+          </div>
+        </div>
+     </div>
+     <div class="col-1"></div>
+    </div>
+</div>
+<style>
+  @media screen and (max-width: 680px){
+    .mycol2{
+      margin-left: 0px;
+    }
+  }
+  @media screen and (min-width :768px)
+  {
+    .mycol2{
+      margin-left: 50px;
+    }
+  }
+    
+</style>
+
+{% endblock%}

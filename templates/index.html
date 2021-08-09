@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title> Exam portal </title>
+    <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTEPYnnxw1tKE3T7Hfabc8PC_pfc64er6tXk3BhG2C-FppyFd6R&amp;usqp=CAU" type="image/x-icon"> 
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+.w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+.fa-anchor,.fa-coffee {font-size:200px}
+</style></head>
+
+<body>
+<div class="w3-top">
+  <div class="w3-bar w3-white w3-card w3-left-align w3-large">
+    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-white" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="/" class="w3-bar-item w3-button w3-padding-large w3-white"><strong>ITsFORyou</strong></a>
+    <a href="/admin/" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">SIGN IN AS ADMIN</a>
+  </div>
+
+  <!-- Navbar on small screens -->
+  <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
+    <a href="/admin/" class="w3-bar-item w3-button w3-padding-large">SIGN IN AS ADMIN</a>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="w3-container w3-dark-grey w3-center" style="padding:128px 16px">
+  <h1 class="w3-margin w3-jumbo">Exam Portal</h1>
+  <p class="w3-xlarge">Hey whatsup</p>
+  <button onclick="window.location.href='/student';" class="w3-button w3-black w3-padding-large w3-large w3-margin-top">STUDENT</button>
+   <button onclick="window.location.href='/faculty';" class="w3-button w3-black w3-padding-large w3-large w3-margin-top">FACULTY</button>
+</header>
+
+<div class="w3-row-padding w3-padding-64 w3-container">
+  <div class="w3-content">
+    <div class="w3-twothird">
+      <h1>Motivation tools</h1>
+      <h5 class="w3-padding-32 w3-text-black">For students they give papers according to their convenience and time and there is no need of using extra thing like paper, pen etc</h5>
+      <p class="w3-text-black">Online examinations, sometimes referred as e-examinations, are the examinations conducted through the internet or in an intranet (if within the Organization) for a remote candidate(s). Most of the examinations issue results as the candidate finish the examination, when there is an answer processing module also included with the system.</p>
+    </div>
+    <div class="w3-third w3-center">
+      <i class="fa fa-anchor w3-padding-64 w3-text-grey"></i>
+    </div>
+  </div>
+</div>
+
+<div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
+    <h1 class="w3-margin w3-xlarge">Study for yourself</h1>
+</div>
+
+<script>
+function myFunction() {
+  var x = document.getElementById("navDemo");
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+  } else { 
+    x.className = x.className.replace(" w3-show", "");
+  }
+}
+</script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+</body></html>

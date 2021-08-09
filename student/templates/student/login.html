@@ -1,0 +1,129 @@
+{%extends 'student/basic.html' %}
+{% block  title %} Student-Login
+{% endblock %}
+{% block  css %}
+
+
+#temp{
+  display: inline-block;
+margin-top:10%;
+margin-left: 33%;
+margin-right:25%;
+ width: 25%;
+}
+    
+
+    
+{% endblock %}
+{% block  body %}
+
+
+<script type="text/javascript">
+  
+</script>
+  
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-3 col-md-3 col-xs-12"></div>
+    <div class="col-sm-6 col-md-6 col-xs-12 rounded" style="margin-bottom: 10%;">
+      <div style="margin-top: 10%; text-align: center;">
+      <img width="20%" src="https://jihamedia.s3.ap-southeast-1.amazonaws.com/3.png" alt="">
+      </div>
+      <div class="red" style="text-align: center;"> 
+          <p>LOGIN</p>
+          </div>
+      <form class="myform shadow-lg" id='temp' action="handlelogin" method="POST" style="border-radius: 30px;margin-top: 5%;">
+          {% csrf_token %}
+          <br><br><br><br>
+          <div class= "box">
+          <label class="mytext" for="email"><b>Email:&emsp;&ensp;&nbsp;&nbsp;&emsp;</b></label>
+          <input style="background: none;border-bottom: black;" class="mybut" type="email" placeholder="Enter Email" name="email" required>
+        </div>
+          <br><br>
+          <div class="box">
+          <label class="mytext" for="password"><b>Password:&emsp;</b></label>
+          <input style="background: none;border-bottom: black;; " type="password" placeholder="Enter Password" name="password" required>
+        </div>
+          <br><br>
+          <br>
+          
+        <div class="pt=3"><button type="submit" class="btn btn-block btn-outline-primary" style="border-radius: 10px;">Submit</button></div><br><br>
+        <div class="mylink" style="text-align: center;"><p><span class="psw">Forgot <a style="color: green;" href="/student/forgotPassword">PASSWORD?</a></span> &emsp; New User?  <a  style="color: red;" href="signup">SIGN UP</a></p></div>
+        
+      </form>
+    </div>
+    <div class="col-sm-3 col-md-3 col-xs-12"></div>
+  </div>
+</div>
+
+<style>
+  @media screen and (max-width: 450px){
+    .red p{
+            background-color: blanchedalmond;
+            width: 100%;
+            font-size: xx-large;
+            border-radius: 30px;
+    }
+    form.myform{
+        margin-bottom: 30%;
+      }
+      .mylink p{
+        font-size: 10px;
+      }
+  }
+
+  form.myform{
+    margin-top: 200px;
+    padding-left: 25px;
+    padding-top: 10px;
+    padding-right: 25px;
+    padding-bottom: 25px;
+    background-color: darkgray;
+  }
+  .box input{
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 20px;
+    font-style: oblique;
+    color: black;
+  }
+  .box{
+    border-bottom: 2px solid black;
+  }
+  ::placeholder{
+    color: white;
+    text-align: center;
+  }
+  @media (min-width: 768px) { 
+    .red p{
+            background-color: blanchedalmond;
+            width: 40%;
+            margin-left: 30%;
+            font-size: xx-large;
+            border-radius: 30px;
+    }
+}
+@media (min-width: 992px) { 
+    .red p{
+            background-color: blanchedalmond;
+            width: 40%;
+            margin-left: 30%;
+            font-size: xx-large;
+            border-radius: 30px;
+    }
+}
+@media (min-width: 1200px) { 
+    .red p{
+            background-color: blanchedalmond;
+            width: 40%;
+            margin-left: 30%;
+            font-size: xx-large;
+            border-radius: 30px;
+    }
+}
+
+</style>
+
+{% endblock %}

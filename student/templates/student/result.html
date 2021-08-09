@@ -1,0 +1,43 @@
+{% extends 'student/basic.html' %}
+{% block title %} Student {% endblock%}
+
+{%block body %}
+
+<script type="text/javascript">
+    $(window).on('load',function(){
+        $('#exampleModalCenter').modal('show');
+    });
+    $(document).on("click", function(event){
+        if(!$(event.target).closest(".model").length){
+            window.location.href = "studentpage";
+        }
+    });
+</script>
+<script type="text/javascript">
+  function preventBack() { window.history.forward(); }
+  setTimeout("preventBack()", 0);
+  window.onunload = function () { null };
+</script>
+
+  <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalCenterTitle">Result</h5>
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body text-danger" style="text-align: center;background-color: burlywood;">
+            <p style="font-size: larger;">you have got {{marks}} % marks in the test</p>
+	    <p>you have given the right answer for {{rightQuestion}}  out of total {{totalQuestion}} Questions</p>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary"><a href="studentpage" class="text-body"> Close</a></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+{% endblock%}
