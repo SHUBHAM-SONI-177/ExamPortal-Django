@@ -2,123 +2,355 @@
 {% block title %} Student {% endblock%}
 
 {%block body %}
-
-
-
-<div class="container-fluid" style="padding-bottom: 100px;margin-top: 20px;">
-  <div style="float: right;background-color: grey;padding: 20px;">Quiz &nbsp; will end <br> <div id="quiz-time-left"></div></div>
+<div class="container-fluid pt-5">
+  <button type="button" class="btn btn-primary py-3 px-5 ml-5" id="modalBtn" onclick="openFullscreen();">
+  Enable Full Screen
+  </button>
 </div>
-<div class="container rounded shadow-lg" style="margin-top: 6%;padding-bottom: 2%;margin-bottom: 20%;">
-  <div style="text-align: center;margin-bottom: 20px;">
-  <a class="rounded text-light btn-block" style="padding: 2%;background-color: black;" >QuestionPaper</a>
-  </div>
-  <br><br><br>
-<form id="ashishform" class="was-validated" action="handleAttemptQuiz" method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-  {% for obj in q %}
-  
-    <p class="text-body" style="text-align: left;">Question-{{forloop.counter}}. {{obj.questionText}}</p>
-    {% if obj.questionImage %}
-    <div class="conatiner">
-      <div class="row">
-        <div class="col-2"></div>
-        <div class="col-8">
-      <img src="{{ obj.questionImage.url }}">
+
+<div id="myModal" >
+
+  <button type="button" class="btn btn-primary" style="height: 100px;" id="modalBtn" onclick="openFullscreen();">
+    Enable Full Screen
+  </button>  
+</div>
+
+
+
+<!-- stream video via webcam -->
+<div class="video-wrap ml-5  rounded mt-5">
+  <video id="video"  class="shadow-lg p-0" style="width:500px; height: 300px;" playsinline autoplay></video>
+</div>
+
+<!-- trigger  canva web  API -->
+<div class="controller">
+  <button id="snap" style="display: none;">Capture</button>
+</div>
+
+<!-- webcam video snapshot -->
+<canvas id="canvas" width="640" height="480" style="display:none"></canvas>
+<!-- <form class="was-validated"  method="POST" id="fuck">
+  {% csrf_token %}
+  <input type="text" name="procImage" id="procImage">
+</form> -->
+
+<div id="paramsSent"\>
+  <div id="return" \>
+    <!-- camera protoring code end here -->
+
+
+
+
+
+
+    <div class="container-fluid" style="padding-bottom: 100px;margin-top: 20px;">
+      <div class="d-inline-block bg-light shadow-lg p-3 ml-5 mt-5 font-weight-bold">Quiz &nbsp; will end <br> <div id="quiz-time-left"></div></div>
     </div>
-      <div class="col-2"></div>
+    <div class="container rounded shadow-lg px-0" style="margin-top: 6%;padding-bottom: 2%;margin-bottom: 20%;">
+      <div style="text-align: center;margin-bottom: 20px;">
+        <a class="rounded text-light btn-block bg-success py-3 w-100" >QuestionPaper</a>
       </div>
-    </div>
-    <br><br>
-    {% endif %}
-    <div class="custom-control custom-radio mb-3" style="margin-left: 1%;">
-      <input  value="A" type="radio" class="custom-control-input" id="aca-{{obj.questionText}}" name="{{obj.questionText}}">
-      <label class="custom-control-label text-body" for="aca-{{obj.questionText}}">{{obj.option1}}</label>
-    </div>
-    <div   class="custom-control custom-radio mb-3" style="margin-left: 1%;">
-      <input  value="B" type="radio" class="custom-control-input" id="acb-{{obj.questionText}}" name="{{obj.questionText}}">
-      <label class="custom-control-label text-body" for="acb-{{obj.questionText}}">{{obj.option2}}</label>
-     
-    </div>
-    <div   class="custom-control custom-radio mb-3" style="margin-left: 1%;">
-        <input value="C" type="radio" class="custom-control-input" id="acc-{{obj.questionText}}" name="{{obj.questionText}}">
-        <label class="custom-control-label text-body" for="acc-{{obj.questionText}}">{{obj.option3}}</label>
+      <br><br><br>
+      <form id="ashishform" class="was-validated px-4" action="handleAttemptQuiz" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for obj in q %}
         
-      </div>
-      <div class="custom-control custom-radio mb-3" style="margin-left: 1%;">
-        <input   value="D" type="radio" class="custom-control-input" id="acd-{{obj.questionText}}" name="{{obj.questionText}}">
-        <label class="custom-control-label text-body" for="acd-{{obj.questionText}}">{{obj.option4}}</label>
+        <p class="text-body" style="text-align: left;">Question-{{forloop.counter}}. {{obj.questionText}}</p>
+        {% if obj.questionImage %}
+        <div class="conatiner">
+          <div class="row">
+            <div class="col-2"></div>
+            <div class="col-8">
+              <img src="{{ obj.questionImage.url }}">
+            </div>
+            <div class="col-2"></div>
+          </div>
+        </div>
+        <br><br>
+        {% endif %}
+        <div class="custom-control custom-radio mb-3" style="margin-left: 1%;">
+          <input  value="A" type="radio" class="custom-control-input" id="aca-{{obj.qid}}" name="{{obj.qid}}">
+          <label class="custom-control-label text-body" for="aca-{{obj.qid}}">{{obj.option1}}</label>
+        </div>
+        <div   class="custom-control custom-radio mb-3" style="margin-left: 1%;">
+          <input  value="B" type="radio" class="custom-control-input" id="acb-{{obj.qid}}" name="{{obj.qid}}">
+          <label class="custom-control-label text-body" for="acb-{{obj.qid}}">{{obj.option2}}</label>
+          
+        </div>
+        <div   class="custom-control custom-radio mb-3" style="margin-left: 1%;">
+          <input value="C" type="radio" class="custom-control-input" id="acc-{{obj.qid}}" name="{{obj.qid}}">
+          <label class="custom-control-label text-body" for="acc-{{obj.qid}}">{{obj.option3}}</label>
+          
+        </div>
+        <div class="custom-control custom-radio mb-3" style="margin-left: 1%;">
+          <input   value="D" type="radio" class="custom-control-input" id="acd-{{obj.qid}}" name="{{obj.qid}}">
+          <label class="custom-control-label text-body" for="acd-{{obj.qid}}">{{obj.option4}}</label>
+          
+        </div>
+        <br><br>
         
-      </div>
-      <br><br>
-   
-    
-      {% endfor %} 
+        
+        {% endfor %} 
+
+        
+        
+        <button type="submit" class="btn btn-outline-success">Submit</button>
+      </form>
+      
+      
+    </div>
+
+    <style>
+      img{
+        width: 100%;
+        height: 100%;
+        max-width: 600px;
+        max-height: 300px;
+
+        display: block; /* remove extra space below image */
+
+      }
+    </style>
+
+
+
+
+    <script type="text/javascript">
+      //for audio mute start
+      document.querySelectorAll('audio, video').forEach(item => {
+        item.muted = true;
+        item.pause();
+      });
+      //end for audio mute
+
+
+
 
       
-  
-      <button type="submit" class="btn btn-block btn-outline-primary">Submit</button>
-  </form>
+      var endtime = {{endTime}};
+      endtime*=1000;
+      endtime = parseInt(endtime);
+      var currtime = Date.now();
+      var total_seconds = (endtime-currtime)/1000; // coverting to second from mili.
+      hour = parseInt(total_seconds/3600);
+      minutes = parseInt((total_seconds%3600)/60);
+      seconds = parseInt((total_seconds%3600)%60);
+      function countDownTimer(){
+        if(seconds < 10){
+          seconds= "0"+ seconds ;
+        }
+        if(minutes < 10){
+          minutes= "0"+ minutes ;
+        }
+        if(hour<10){
+          hour= "0"+hour;
+        }
+        
+        document.getElementById("quiz-time-left").innerHTML
+        = "in "+hour+" : "+minutes+" : "+seconds;
+        if(total_seconds <= 0){
+          document.getElementById("ashishform").submit();
+        }
+        else{
+          total_seconds = total_seconds -1 ;
+          hour = parseInt(total_seconds/3600);
+          minutes = parseInt((total_seconds%3600)/60);
+          seconds = parseInt((total_seconds%3600)%60);
+          localStorage.setItem("total_seconds",total_seconds)
+          setTimeout("countDownTimer()",1000);
+        }
+      }
+      setTimeout("countDownTimer()",1000);
+      
+      
+      function finishpage(){
+        alert("unload event detected!");
+        document.getElementById("ashishform").submit();
+      }
+      window.onbeforeunload= function() {
+        setTimeout('document.quiz.submit()',1);
+      }
 
-</div>
+    </script>
 
-<style>
-  img{
-    width: 100%;
-    height: 100%;
-    max-width: 600px;
-    max-height: 300px;
 
-display: block; /* remove extra space below image */
+
+    <!-- for enabling camera proctrig start here -->
+    <script type="text/javascript">
+      'use strict';
+
+      const video = document.getElementById('video');
+      const canvas = document.getElementById('canvas');
+      const snap = document.getElementById('snap');
+      const errorMsgElement = document.getElementById('span#ErrorMsg');
+      const csrf = document.getElementsByName('csrfmiddlewaretoken');
+
+      const constraints = {
+        audio : true,
+        video : {
+          width : 1280,height : 720
+        }
+      };
+
+
+//Access webcam
+async function init(){
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    handleSuccess(stream);
+  }
+  catch(e){
+    errorMsgElement.innerHTML = 'navigator.getUserMedia.error: ${e.toString()}';
+  }
+}
+
+
+//success
+function handleSuccess(stream){
+  window.stream = stream;
+  video.srcObject = stream;
+}
+
+//Load init
+init();
+
+//Draw image
+var context = canvas.getContext('2d');
+snap.addEventListener("click",function(){
+  context.drawImage(video,0,0,640,480);
+});
+
+
+
+var imageCounter = 1;
+nClick();  //uncomment/commnet this to automatically caputure image and sent it to server
+/* click on capture button every n seconds ,and second canva image to server*/
+function nClick(){
+  const clickBtn = document.getElementById('snap');
+  //hide capture button
+  clickBtn.style.display = 'hidden';
+
+  const n = 5000;
+  //capture canva every n second, and send it to server
+  var x = setInterval(capture,n,clickBtn);
+
+  const timeout = 30000;
+  //const timeout = 1800000; //30 minutes
+  //stop capturing image after exam over (T time)
+  setTimeout(stopCapturing,timeout,x);
 
 }
-</style>
 
-
-
-<script type="text/javascript">
-            if(localStorage.getItem("total_seconds")){
-              var total_seconds = localStorage.getItem("total_seconds");
-            } 
-            else {
-                var total_seconds = 60*{{ashu_time}};
-              }
-            hour = parseInt(total_seconds/3600);
-            minutes = parseInt((total_seconds%3600)/60);
-            seconds = parseInt((total_seconds%3600)%60);
-            function countDownTimer(){
-
-                if(seconds < 10){
-                    seconds= "0"+ seconds ;
-                }if(minutes < 10){
-                    minutes= "0"+ minutes ;
-                }
-                if(hour<10){
-                  hour= "0"+hour;
-                }
-                
-            document.getElementById("quiz-time-left").innerHTML
-                = "in "+hour+" : "+minutes+" : "+seconds;
-                if(total_seconds <= 0){
-                  document.getElementById("ashishform").submit();
-                }else{
-                    total_seconds = total_seconds -1 ;
-                    hour = parseInt(total_seconds/3600);
-                    minutes = parseInt((total_seconds%3600)/60);
-                    seconds = parseInt((total_seconds%3600)%60);
-                    localStorage.setItem("total_seconds",total_seconds)
-                    setTimeout("countDownTimer()",1000);
-                }
-            }
-        setTimeout("countDownTimer()",1000);
-    
-            
- function finishpage(){
-alert("unload event detected!");
-document.getElementById("ashishform").submit();
+function capture(clickBtn) {
+  clickBtn.click();
 }
-window.onbeforeunload= function() {
-setTimeout('document.quiz.submit()',1);
+$(document).ready(function(){
+  $('#snap').click(function(){
+    var image = canvas.toDataURL();
+    image = image.slice(22);
+
+    $.ajax({
+      type: 'POST',
+      url: 'saveImage',
+      data: {'csrfmiddlewaretoken' : csrf[0].value, 'image' : image,'imageCounter': imageCounter},
+      success: function (response) {
+        console.log("Sent to the server");
+        imageCounter++;
+      },
+      error: function (response) {
+        console.log("fuck off");
+      }
+    });
+  });
+});
+
+
+function stopCapturing(x){
+  clearInterval(x);
 }
 
 </script>
+<!-- for enabling camera proctrig end here -->
+<!-- include jquery -->
+
+
+<style type="text/css">
+  #myModal{
+    z-index: 2;
+    position: fixed;
+    top : 0px;
+    width : 100%;
+    height: 100%;
+    background: url('https://i.ibb.co/hHRXRRP/papers-co-sh56-white-oksusu-art-gradation-blur-36-3840x2400-4k-wallpaper.jpg');
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  } 
+
+
+</style>
+
+<!-- <script type="text/javascript">
+  $('#modalBtn').click(function(){
+    $('#myModal').css({"display" : "none"});
+  });
+</script> -->
+
+<script>
+  var fullScreenViolatedCounter = 0;
+
+  var elem = document.documentElement;
+  function openFullscreen() {
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) { /* Safari */
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE11 */
+      elem.msRequestFullscreen();
+    }
+  //document.getElementById('modal').remove();
+  document.getElementById('myModal').style.display = "none";
+}
+
+function closeFullscreen() {
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.webkitExitFullscreen) { /* Safari */
+    document.webkitExitFullscreen();
+  } else if (document.msExitFullscreen) { /* IE11 */
+    document.msExitFullscreen();
+  }
+
+  fullScreenViolated();
+}
+
+document.onkeyup = function(event){
+  if((event.which == 27 || event.which == 122)){
+    fullScreenViolated();
+  }
+}
+
+function fullScreenViolated(){
+  fullScreenViolatedCounter++;
+  console.log(fullScreenViolatedCounter);
+  //send message;
+  $.ajax({
+    type: 'POST',
+    url: 'fullScreenViolated',
+    data: {'csrfmiddlewaretoken' : csrf[0].value, 'fullScreenViolatedCounter' : fullScreenViolatedCounter},
+    success: function (response) {
+      console.log("Sent to the server");
+    },
+    error: function (response) {
+      console.log("fuck off");
+    }
+  });
+}
+
+
+//for disabling navigation bar 
+document.getElementById("mainNav").style.display="none";
+</script>
+
 {% endblock%}

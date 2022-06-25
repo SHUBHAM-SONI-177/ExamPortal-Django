@@ -3,7 +3,7 @@
 {% endblock %}
 {% block  css %}
 
-    
+
 {% endblock %}
 {% block  body %}
 
@@ -17,22 +17,22 @@
             <th scope="col"><p style="font-size: x-large;">Name</p></th>
             <th scope="col"><p style="font-size: x-large;">PaperID</p></th>
             <th scope="col"><p style="font-size: x-large;">Marks</p></th>
-          </tr>
-        </thead>
-        <tbody>
-            {% for obj in leaders %}
-                <tr>
-                    <td class="counterCel"></td>
-                    <td><p style="font-size: large;">{{obj.studentID}} </p></td>
-                    <td><p style="font-size: large;">{{obj.paperID}}</p></td>
-                    <td><p style="font-size: large;">{{obj.studentMarks}}</p></td>
-                </tr>
-            {% endfor %}
-        </tbody>
-      </table>
+        </tr>
+    </thead>
+    <tbody>
+        {% for obj in leaders %}
+        <tr>
+            <td class="counterCel"></td>
+            <td><p style="font-size: large;">{{obj.studentID_id}} </p></td>
+            <td><p style="font-size: large;">{{obj.paperID_id}}</p></td>
+            <td><p style="font-size: large;">{{obj.studentMarks}}</p></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 </div>
 <style>
-     table {
+   table {
     counter-reset: tableCount;     
 }
 .counterCel:before {              

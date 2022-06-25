@@ -2,6 +2,7 @@
 <html lang="en"><head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="#">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <title> Exam portal </title>
     <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTEPYnnxw1tKE3T7Hfabc8PC_pfc64er6tXk3BhG2C-FppyFd6R&amp;usqp=CAU" type="image/x-icon"> 
@@ -15,11 +16,11 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 .fa-anchor,.fa-coffee {font-size:200px}
 </style></head>
 
-<body>
+<body  onmousedown = 'return false' onselectstart = 'return false'>
 <div class="w3-top">
   <div class="w3-bar w3-white w3-card w3-left-align w3-large">
     <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-white" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
-    <a href="/" class="w3-bar-item w3-button w3-padding-large w3-white">ITsForYou</a>
+    <a href="/" class="w3-bar-item w3-button w3-padding-large w3-blue"><strong>ITsFORyou</strong></a>
     <a href="/admin/" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">SIGN IN AS ADMIN</a>
   </div>
 
@@ -30,11 +31,11 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 </div>
 
 <!-- Header -->
-<header class="w3-container w3-dark-grey w3-center" style="padding:128px 16px">
+<header class="w3-container w3-light-grey w3-center" style="padding:128px 16px">
   <h1 class="w3-margin w3-jumbo">Exam Portal</h1>
   <p class="w3-xlarge">Hey whatsup</p>
-  <button onclick="window.location.href='/student';" class="w3-button w3-black w3-padding-large w3-large w3-margin-top">STUDENT</button>
-   <button onclick="window.location.href='/faculty';" class="w3-button w3-black w3-padding-large w3-large w3-margin-top">FACULTY</button>
+  <button onclick="window.location.href='/student';" class="w3-button w3-green w3-padding-large w3-large w3-margin-top">STUDENT</button>
+   <button onclick="window.location.href='/faculty';" class="w3-button w3-green w3-padding-large w3-large w3-margin-top">FACULTY</button>
 </header>
 
 <div class="w3-row-padding w3-padding-64 w3-container">
@@ -45,12 +46,12 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       <p class="w3-text-black">Online examinations, sometimes referred as e-examinations, are the examinations conducted through the internet or in an intranet (if within the Organization) for a remote candidate(s). Most of the examinations issue results as the candidate finish the examination, when there is an answer processing module also included with the system.</p>
     </div>
     <div class="w3-third w3-center">
-      <i class="fa fa-anchor w3-padding-64 w3-text-grey"></i>
+      <i class="fa fa-anchor w3-padding-64 w3-text-blue"></i>
     </div>
   </div>
 </div>
 
-<div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
+<div class="w3-container w3-blue w3-center  w3-padding-64">
     <h1 class="w3-margin w3-xlarge">Study for yourself</h1>
 </div>
 
@@ -68,5 +69,18 @@ function myFunction() {
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
+<script type="text/javascript">
+  window.oncontextmenu = function () {
+    return false;
+  }
+  $(document).keydown(function (event) {
+    if (event.keyCode == 123) {
+      return false;
+    }
+    else if ((event.ctrlKey && event.shiftKey && event.keyCode == 73) || (event.ctrlKey && event.shiftKey && event.keyCode == 74)) {
+      return false;
+    }
+  });
+</script>
 
 </body></html>

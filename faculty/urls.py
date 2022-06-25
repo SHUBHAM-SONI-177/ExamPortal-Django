@@ -24,27 +24,25 @@ from django.conf.urls import url
 
 urlpatterns = [
      path("", views.index, name="FacultyHome"),
-     path("questionInput", views.inputQuestion, name="inputQuestion"),
      path("signup",views.signup,name="signup"),
-     path("login2",views.login2,name="login2"),
-     path("facultylogin",views.facultylogin,name="login"),
+     path("handleSignup",views.handleSignup,name="handleSignup"),
+     path("facultylogin",views.facultylogin,name="facultylogin"),
      path("handlelogin",views.handlelogin,name="handlelogin"),
      path("facultylogout",views.facultylogout,name="facultylogout"),
+     path("facultypage",views.facultypage,name="facultypage"),
      path("viewProfile",views.viewProfile,name="viewProfile"),
      path("handleUpdateProfilePic",views.handleUpdateProfilePic,name="handleUpdateProfilePic"),
+     path("addQuestion", views.addQuestion, name="addQuestion"),
      path("handleSetQuizTime",views.handleSetQuizTime,name="handleSetQuizTime"),
      path("handleSetLiveExamPaper",views.handleSetLiveExamPaper,name="handleSetLiveExamPaper"),
-     path("facultypage",views.facultypage,name="facultypage"),
      path("seeQuestionPaper",views.seeQuestionPaper,name="seeQuestionPaper"),
      path("forgotPassword",views.forgotPassword,name="forgotPassword"),
      path("handleForgotPassword",views.handleForgotPassword,name="handleForgotPassword"),
      path("handleChangePassword",views.handleChangePassword,name="handleChangePassword"),
-     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        views.activate, name='activate'),
-     url(r'^facultyChangePassword/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        views.facultyChangePassword, name='facultyChangePassword'),
+     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,32})/$',views.activate, name='activate'),
+     url(r'^facultyChangePassword/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,32})/$',views.facultyChangePassword, name='facultyChangePassword'),
      path("handleNumberOfQuestion",views.handleNumberOfQuestion,name="handleNumberOfQuestion"),
-     path("saveQuestion",views.saveQuetion,name="savequestion")
-
+     path("saveQuestion",views.saveQuetion,name="saveQuestion"),
+     path("download_csv",views.download_csv,name="download_csv")
 ]
 

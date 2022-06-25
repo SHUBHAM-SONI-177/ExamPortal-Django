@@ -24,12 +24,14 @@ from django.conf import settings
 urlpatterns = [
      path("", views.index, name="StudentHome"),
      path("signup",views.signup,name="signup"),
-     path("login2",views.login2,name="login2"),
+     path("handleSignup",views.handleSignup,name="handleSignup"),
      path("studentlogin",views.studentlogin,name="login"),
      path("handlelogin",views.handlelogin,name="handlelogin"),
      path("studentlogout",views.studentlogout,name="studentlogout"),
      path("attemptQuiz",views.attemptQuiz,name="attemptQuiz"),
      path("handleAttemptQuiz",views.handleAttemptQuiz,name="handleAttemptQuiz"),
+     path("saveImage",views.saveImage.as_view(),name="saveImage"),
+     path("fullScreenViolated",views.fullScreenViolated.as_view(),name="fullScreenViolated"),
      path("viewProfile",views.viewProfile,name="viewProfile"),
      path("handleUpdateProfilePic",views.handleUpdateProfilePic,name="handleUpdateProfilePic"),
      path("liveAttemptQuiz",views.liveAttemptQuiz,name="liveAttemptQuiz"),
@@ -39,10 +41,8 @@ urlpatterns = [
      path("forgotPassword",views.forgotPassword,name="forgotPassword"),
      path("handleForgotPassword",views.handleForgotPassword,name="handleForgotPassword"),
      path("handleChangePassword",views.handleChangePassword,name="handleChangePassword"),
-     url(r'^studentActivate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        views.studentActivate, name='studentActivate'),
-      url(r'^changePassword/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        views.changePassword, name='changePassword'),
+     url(r'^studentActivate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,32})/$',views.studentActivate, name='studentActivate'),
+     url(r'^changePassword/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,32})/$',views.changePassword, name='changePassword'),
 ]
 
 

@@ -1,17 +1,24 @@
 from django.db import models
 from datetime import datetime
 
-class paperTime(models.Model):
-    paperID=models.CharField(max_length=100,primary_key=True)
-    quizTime=models.IntegerField(default=60)
+class student(models.Model):
+    name=models.CharField(max_length=50)
+    email=models.EmailField(primary_key=True)
+    dob=models.DateField()
+    address=models.CharField(max_length=300)
+    password=models.CharField(max_length=1000,default='None')
+    profilePic=models.ImageField(null=True)
+    isActive=models.BooleanField(null=True)
     def __str__(self):
-        return self.paperID
+        return self.email
 
 class questionPaper(models.Model):
     paperID=models.CharField(max_length=100,primary_key=True)
+    faculty_id=models.CharField(max_length=100)
+    duration=models.IntegerField(default=60)
     questionTag=models.CharField(max_length=100)
     def __str__(self):
-        return str(self.paperID)+" "+str(self.questionTag)
+        return str(self.paperID)
 
 class question(models.Model):
     qid=models.AutoField(primary_key=True)
@@ -27,30 +34,6 @@ class question(models.Model):
     def __str__(self):
         return str(self.qid)
 
-class performance(models.Model):
-    studentID=models.EmailField()
-    paperID=models.CharField(max_length=200)
-    time=models.DateTimeField()
-    percentageMarks=models.IntegerField()
-
-class liveTestPerformance(models.Model):
-    studentID=models.EmailField()
-    paperID=models.CharField(max_length=100)
-    studentMarks=models.IntegerField()
-    def __str__(self):
-        return self.studentID
-
-class student(models.Model):
-    name=models.CharField(max_length=50)
-    email=models.EmailField(primary_key=True)
-    dob=models.DateField()
-    address=models.CharField(max_length=300)
-    password=models.CharField(max_length=1000,default='None')
-    profilePic=models.ImageField(null=True)
-    isActive=models.BooleanField(null=True)
-    def __str__(self):
-        return self.email
-
 class studyMaterial(models.Model):
     materialID=models.AutoField(primary_key=True)
     materialTag=models.CharField(max_length=200)
@@ -59,12 +42,15 @@ class studyMaterial(models.Model):
     def __str__(self):
         return str(self.materialID)+" "+str(self.materialTag)
 
-
-
 class liveQuestionPaper(models.Model):
-    paperID=models.CharField(max_length=100,primary_key=True)
     paperDate=models.DateField()
+    paperID=models.ForeignKey(to=questionPaper,on_delete=models.CASCADE,primary_key=True)
     quizTime=models.TimeField(default=datetime.now().time())
     def __str__(self):
-        return self.paperID
+        return self.paperID.paperID
 
+class performance(models.Model):
+    studentID=models.ForeignKey(to=student,on_delete=models.CASCADE)
+    paperID=models.ForeignKey(to=questionPaper,on_delete=models.CASCADE)
+    time=models.DateTimeField()
+    percentageMarks=models.IntegerField()

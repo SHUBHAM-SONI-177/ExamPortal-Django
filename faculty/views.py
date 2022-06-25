@@ -13,7 +13,6 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import logout
 from django.contrib.auth import login
 from .models import faculty
-from student.models import paperTime
 from student.models import liveQuestionPaper
 from passlib.hash import pbkdf2_sha256
 from django.contrib.sites.shortcuts import get_current_site
@@ -23,8 +22,9 @@ from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
-
+import mimetypes
 import re
+import os
 
 def index(request):
     if request.session.get('slogin',False):
@@ -32,29 +32,29 @@ def index(request):
         return HttpResponseRedirect('/student/studentpage')
     if request.session.get('flogin',False):
         return HttpResponseRedirect('/faculty/facultypage')
-    params={}
-    return render(request,'faculty/index.html',params)
+    return HttpResponseRedirect('/faculty/facultylogin')
 
-def inputQuestion(request):
+def addQuestion(request):
     params={}
     if request.session.get('flogin',False):
         if request.method == "POST":
             discount = question(paperID = questionPaper.objects.get(paperID=request.session['questionPaper']))
-            form=questionForm(request.POST,request.FILES,instance=discount)
+            form = questionForm(request.POST,request.FILES,instance=discount)
             if form.is_valid():
                 form.save()
                 if 'addmore' not in request.POST:
                     messages.success(request,'Succesfully Uploaded')
                     return HttpResponseRedirect('facultypage')
-                return HttpResponseRedirect('questionInput')
+            else:
+                messages.error(request,"Invalid Inputs")
+            return HttpResponseRedirect('addQuestion')
         else:
             form=questionForm()
             params['form']=form
-            return render(request,'faculty/questionInput.html',params)
+            return render(request,'faculty/addQuestionToExistingQuestionPaper.html',params)
     else:
         messages.error(request, 'you have to login to upload queston paper')
         return HttpResponseRedirect('facultylogin',params)
-
 
 def signup(request):
     params={}
@@ -63,7 +63,6 @@ def signup(request):
     else:
         messages.error(request, 'you are already signed in')
         return HttpResponseRedirect('/faculty',params)
-
 
 def handlelogin(request):
     params={}
@@ -97,7 +96,7 @@ def validPass(mypass):
     sPass=len(mypass)>6 and len(mypass)<20 and re.search("[a-z]",mypass) and re.search("[0-9]",mypass) and re.search("[A-Z]",mypass) and re.search("[$#@]",mypass)
     return sPass
 
-def login2(request):
+def handleSignup(request):
     params={}
     tname=request.POST.get('name','none')
     temail=request.POST.get('email','none')
@@ -109,13 +108,10 @@ def login2(request):
     if not validPass(tpassword):
         messages.error(request,"Passwords must be  greater than 6 charater and less than 20 characters \n must contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character, but cannot contain whitespace")
         return HttpResponseRedirect('signup',params)
-    
     test=faculty.objects.filter(email=temail)
     if len(test)!=0:
         messages.error(request, 'User already exist with this email')
         return HttpResponseRedirect('signup',params)
-        
-   
     if trepeat_password==tpassword:
         enc_string=pbkdf2_sha256.encrypt(tpassword,rounds=12000,salt_size=32)
         tstudent=faculty(name=tname,email=temail,dob=tdob,address=taddress,password=enc_string,profilePic=tprofilepic)
@@ -138,7 +134,6 @@ def login2(request):
     else:
         messages.error(request, 'passowrd did not match')
         return HttpResponseRedirect('signup',params)
-    
 
 def facultylogout(request):
     params={}
@@ -161,15 +156,12 @@ def activate(request, uidb64, token):
     else:
         return HttpResponse('Activation link is invalid!')
 
-
 def forgotPassword(request):
         return render(request,'faculty/forgotPassword.html')
+
 def handleForgotPassword(request):
-    print("lest do it")
     if request.method=="POST":
-        print("i am here")
         tempmail=request.POST.get('email')
-        
         tstudent=faculty.objects.get(email=tempmail)
         tstudent.isActive=False
         tstudent.save()
@@ -181,10 +173,6 @@ def handleForgotPassword(request):
                 'uid':urlsafe_base64_encode(force_bytes(tempmail)),
                 'token':account_activation_token.make_token(tstudent),
             })
-        print(message)
-        print(current_site)
-        print(current_site.domain)
-        print(urlsafe_base64_encode(force_bytes(tempmail)))
         to_email = tempmail
         email = EmailMessage(
                         mail_subject, message, to=[to_email]
@@ -194,6 +182,7 @@ def handleForgotPassword(request):
         return HttpResponseRedirect('facultylogin')
     else:
         return HttpResponse("invalid request")
+
 def facultyChangePassword(request,uidb64,token):
     tpflag=True
     try:
@@ -208,6 +197,7 @@ def facultyChangePassword(request,uidb64,token):
         return render(request,'faculty/handleChangePassword.html')
     else:
         return HttpResponse('Activation link is invalid!')
+
 def handleChangePassword(request):
     if request.method=='POST':
         tpflag=True
@@ -220,17 +210,11 @@ def handleChangePassword(request):
             tpflag=False
         newp=request.POST.get('newP')
         cnewP=request.POST.get('cnewP')
-        
         if tpflag and cnewP and newp==cnewP:
-            print(newp)
-            print(tstudent.password)
             enc_string=pbkdf2_sha256.encrypt(newp,rounds=12000,salt_size=32)
             updated=faculty.objects.filter(email=uid).update(password=enc_string)
             tstudent.password=enc_string
             tstudent.save()
-            print(pbkdf2_sha256.verify(cnewP,tstudent.password))
-            print(updated)
-            print(tstudent.password)
             messages.success(request,"password changed ")
             return HttpResponseRedirect('facultylogin')
         else:
@@ -248,7 +232,6 @@ def viewProfile(request):
     else:
         messages.error(request, 'first you should login to view your profile')
         return HttpResponseRedirect('facultylogin',params)
-
 
 def handleUpdateProfilePic(request):
     params={}
@@ -269,8 +252,8 @@ def handleSetQuizTime(request):
         paperID1=request.POST.get("paperID")
         ashu_time=request.POST.get("ashu_time")
         try:
-            obj,created = paperTime.objects.get_or_create(paperID=paperID1)
-            obj.quizTime=ashu_time
+            obj = questionPaper.objects.get(paperID=paperID1)
+            obj.duration = ashu_time
             obj.save()
             messages.success(request,"paper time updated")
             return HttpResponseRedirect('facultypage',params)
@@ -290,15 +273,12 @@ def handleSetLiveExamPaper(request):
         try:
             obj=liveQuestionPaper.objects.filter(paperID=paperID1)
             if len(obj)==0:
-                ahsu_temp=liveQuestionPaper(paperID=paperID1,quizTime=ashu_time,paperDate=ashu_date)
+                ahsu_temp=liveQuestionPaper(paperID=questionPaper.objects.get(paperID=paperID1),quizTime=ashu_time,paperDate=ashu_date)
                 ahsu_temp.save()
             else:
-                obj=liveQuestionPaper.objects.get(paperID=paperID1)
-                
+                obj=liveQuestionPaper.objects.get(paperID=questionPaper.objects.get(paperID=paperID1))
                 obj.quizTime=ashu_time
-                
                 obj.paperDate=ashu_date
-                
                 obj.save()
         except:
             messages.error(request,"live paper settting failed")
@@ -308,24 +288,25 @@ def handleSetLiveExamPaper(request):
     else:
         messages.error(request,"please login to set Live Question Paperr")
         return HttpResponseRedirect('facultylogin',params)
-    
 
 def facultypage(request):
     params={}
     if request.session.get('flogin',False):
-        profile= faculty.objects.get(email=request.session.get('loguser','None'))
+        profile = faculty.objects.get(email=request.session.get('loguser','None'))
         params['profile']=profile
         if request.method == "POST":
             if 'form1submit' in request.POST:
                 form1=questionHead(request.POST,request.FILES)
                 if form1.is_valid():
-                    paperID1=form1.cleaned_data['paperID']
-                    request.session['questionPaper']=paperID1
-                    paperTime.objects.get_or_create(paperID=paperID1)
-                    form1.save()
+                    questionHeadObj = questionPaper()
+                    questionHeadObj.paperID=form1.cleaned_data['paperID']
+                    questionHeadObj.faculty_id=request.session.get('loguser','None')
+                    questionHeadObj.questionTag=form1.cleaned_data['questionTag']
+                    request.session['questionPaper']=questionHeadObj.paperID
+                    questionHeadObj.save()
                 else:
                     request.session['questionPaper']=request.POST.get('paperID')
-                return HttpResponseRedirect('questionInput')
+                return HttpResponseRedirect('addQuestion')
 
             if 'studymaterialsubmit' in request.POST:
                 form=studyMaterialForm(request.POST or None ,request.FILES or None)
@@ -338,8 +319,13 @@ def facultypage(request):
             params['form1']=form1
             form=studyMaterialForm()
             params['form']=form
-
-        paperID=question.objects.values_list('paperID',flat=True).distinct()
+            path = 'reports/'
+            try:
+                dir_list = os.listdir(path)
+                print(dir_list)
+            except:
+                pass
+        paperID=questionPaper.objects.filter(faculty_id=request.session.get('loguser','None'))
         params['paperID']=paperID
         return render(request,"faculty/facultypage.html",params)
     else:
@@ -353,12 +339,6 @@ def seeQuestionPaper(request):
             value=request.POST.get('paperID')
             q=question.objects.filter(paperID=value)
             params['q']=q
-            params['paperID']=value
-            try:
-                obj=paperTime.objects.get(paperID=value)
-                params['ashu_time']=obj.quizTime
-            except:
-                params['ashu_time']=60
             return render(request,"faculty/seeQuestionPaper.html",params)
         else:
             messages.error(request, ' please log in In roder to attempt quiz')
@@ -367,21 +347,22 @@ def seeQuestionPaper(request):
         messages.error(request, 'first you should login then only you can see the questions')
         return HttpResponseRedirect('facultylogin',params)
 
-
 def numberOfQuestion(request):
     if request.session.get('flogin',False):
         return render(request,'faculty/numberOfQuestion.html')
 
-
 def handleNumberOfQuestion(request):
     if request.method=="POST":
         noq1=request.POST.get('noq')
-        noq2=int(noq1)
-        request.session['noq']=noq2
-        if noq2>0:
-            return render(request,'faculty/newInputQuestion.html',{"range":range(noq2)})
-        else:
-            return HttpResponse("Invalid number of question")
+        try:
+            noq2=int(noq1)
+            request.session['noq']=noq2
+            if noq2>=0:
+                return render(request,'faculty/newQuestionPaper.html',{"range":range(noq2)})
+            else:
+                return HttpResponse("Invalid number of question")
+        except:
+            return HttpResponse("Invalid Input")
     else:
         return HttpResponse("Invalid Request")
 
@@ -400,6 +381,8 @@ def saveQuetion(request):
             tquestionpaper=questionPaper(paperID=paperID,questionTag=paperTag)
             tquestionpaper.save()
         tquestionpaper=questionPaper.objects.get(paperID=paperID)
+        wrong_indexes = []
+        ind = 1
         for i in range(noq):
             qtext="qText"+str(i)
             qImage="qImage"+str(i)
@@ -417,18 +400,40 @@ def saveQuetion(request):
             DVal=request.POST.get(D,'none')
             RVal=request.POST.get(R,'none')
             MVal=request.POST.get(M,'none')
-            if(AVal!='none' and BVal!='none' and CVal!='none' and DVal!='none' and RVal!='none' and qtextVal!='none'):
+            if(AVal!='none' and BVal!='none' and CVal!='none' and DVal!='none' and RVal!='none' and (RVal in ['A','B','C','D']) and qtextVal!='none'):
                 tquestion=question(paperID=tquestionpaper,questionText=qtextVal,option1=AVal,option2=BVal,option3=CVal,option4=DVal,rightOption=RVal)
-                if MVal!='none':
+                try:
                     tquestion.questionMarks=int(MVal)
                     tquestion.save()
-                if qimageVal!='none':
-                    tquestion.questionImage=qimageVal
-                    tquestion.save()  
-        messages.success(request,'Uploaded Successfully')
+                    if qimageVal!='none':
+                        tquestion.questionImage=qimageVal
+                        tquestion.save()
+                except:
+                    wrong_indexes.append(ind)
+            else:
+                wrong_indexes.append(ind)
+            ind += 1
+        if len(wrong_indexes)>0:
+            msg_wrong = "invalid inputs for questions "
+            for i in wrong_indexes:
+                msg_wrong += str(i)+" "
+            messages.error(request,msg_wrong)
+        else:
+            messages.success(request,'Uploaded Successfully')
         return HttpResponseRedirect("facultypage")
     else:
         return HttpResponse("invalid request")
 
-
-
+def download_csv(request):
+    # fill these variables with real values
+    filename = request.GET.get('file','none')+".csv"
+    fl_path = 'reports/'+filename
+    if not os.path.exists(fl_path):
+        return HttpResponse("File Not Created")
+    if not os.path.isfile(fl_path):
+        return HttpResponse("invalid file")
+    fl = open(fl_path, 'r')
+    mime_type, _ = mimetypes.guess_type(fl_path)
+    response = HttpResponse(fl, content_type=mime_type)
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    return response

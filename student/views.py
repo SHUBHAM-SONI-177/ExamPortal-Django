@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse,HttpResponseRedirect
 from .models import student
+from .models import questionPaper
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib import auth
@@ -11,9 +12,7 @@ from .models import question
 from .models import performance
 from datetime import datetime,timedelta,date
 from .models import studyMaterial
-from .models import paperTime
 from .models import liveQuestionPaper
-from .models import liveTestPerformance
 from django.db.models import query_utils,query,Q
 from passlib.hash import pbkdf2_sha256
 from django.contrib.sites.shortcuts import get_current_site
@@ -23,14 +22,17 @@ from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
-
-
+from django.http import JsonResponse
+from django.views.generic import View
+import base64
 import re
-
+import os
 from .forms import SetPasswordForm
-
+from csv import writer
 
 params={'slogin':False,'flogin':False,'alogin':False,'loggedin':False,'loguser':'None'}
+cheated = {}
+
 def index(request):
     if request.session.get('slogin',False):
         return HttpResponseRedirect('/student/studentpage')
@@ -42,7 +44,7 @@ def index(request):
     
 def signup(request):
     global params
-    if not request.session.get('loggedin',False) :
+    if not request.session.get('loggedin',False):
         return render(request,'student/signup.html',params)
     else:
         return HttpResponseRedirect('/',params)
@@ -51,13 +53,12 @@ def handlelogin(request):
      global params
      temail=request.POST.get('email')
      tpassword=request.POST.get('password')
-     #user = authenticate(username=temail, password=tpassword)
      try:
          details=student.objects.get(email=temail)
      except:
          messages.error(request, 'wrong credentials')
          return HttpResponseRedirect('studentlogin',params)
-     if  pbkdf2_sha256.verify(tpassword,details.password):
+     if pbkdf2_sha256.verify(tpassword,details.password):
          if not details.isActive:
              messages.error(request, 'please verify your email by clicking the link you have recieved via email')
              return HttpResponseRedirect('studentlogin',params)
@@ -67,21 +68,23 @@ def handlelogin(request):
          params['loggedin']=True
          params['slogin']=True
          params['loguser']=temail
-         #login(request,user)
          messages.success(request, 'You are logged in succesfully')
          return HttpResponseRedirect('studentpage',params)
      else:
          messages.error(request, 'wrong credentials')
          return HttpResponseRedirect('studentlogin',params)
+
 def studentlogin(request):
     global params
     if request.session.get('loggedin',False):
         return HttpResponseRedirect('studentpage',params)
     return render(request,'student/login.html',params)
+
 def validPass(mypass):
     sPass=len(mypass)>6 and len(mypass)<20 and re.search("[a-z]",mypass) and re.search("[0-9]",mypass) and re.search("[A-Z]",mypass) and re.search("[$#@]",mypass)
     return sPass
-def login2(request):
+
+def handleSignup(request):
     tname=request.POST.get('name','none')
     temail=request.POST.get('email','none')
     tdob=request.POST.get('dob','none')
@@ -89,7 +92,6 @@ def login2(request):
     tpassword=request.POST.get('password','none')
     trepeat_password=request.POST.get('repeat_password','none')
     tprofilepic=request.FILES.get('profilePic','none')
-    
     test=student.objects.filter(email=temail)
     if not validPass(tpassword):
         messages.error(request,"Passwords must be  greater than 6 charater and less than 20 characters \n and  must contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character, but cannot contain whitespace")
@@ -97,13 +99,10 @@ def login2(request):
     if len(test)!=0:
         messages.error(request, 'User already exist with this email')
         return HttpResponseRedirect('signup',params)
-        
-   
     if trepeat_password==tpassword:
         enc_string=pbkdf2_sha256.encrypt(tpassword,rounds=12000,salt_size=32)
         tstudent=student(name=tname,email=temail,dob=tdob,address=taddress,password=enc_string,profilePic=tprofilepic,isActive=False)
         tstudent.save()
-
         current_site = get_current_site(request)
         mail_subject = 'Please verify  your  email.'
         message = render_to_string('student/acc_active_email.html', {
@@ -112,20 +111,13 @@ def login2(request):
                 'uid':urlsafe_base64_encode(force_bytes(temail)),
                 'token':account_activation_token.make_token(tstudent),
             })
-        print(message)
-        print(current_site)
-        print(current_site.domain)
-        print(urlsafe_base64_encode(force_bytes(temail)))
         to_email = temail
         email = EmailMessage(
                         mail_subject, message, to=[to_email]
             )
         email.send()
-        #request.session['rguser']=temail
         messages.success(request,'Please confirm your email address to complete the registration')
-        return HttpResponseRedirect('studentlogin',params)
-        #tuser = User.objects.create_user(username=temail,email=temail,password=tpassword)
-        #tuser.save()                             
+        return HttpResponseRedirect('studentlogin',params)                           
     else:
         messages.error(request, 'passowrd did not match')
         return HttpResponseRedirect('signup',params)
@@ -134,10 +126,7 @@ def studentActivate(request, uidb64, token):
     tpflag=True
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
-        print(uid)
-        #tstudent = student.objects.get(email=request.session.get('rguser','None'))
         tstudent = student.objects.get(email=uid)
-        #del request.session['rguser']
     except:
         tpflag=False
     if tpflag and account_activation_token.check_token(tstudent, token):
@@ -146,6 +135,7 @@ def studentActivate(request, uidb64, token):
         return HttpResponseRedirect('/student/studentlogin')
     else:
         return HttpResponse('Activation link is invalid!')
+
 def studentlogout(request):
     global params
     request.session['slogin']=False
@@ -155,13 +145,13 @@ def studentlogout(request):
     params['loggedin']=False
     params['loguser']='None'
     return HttpResponseRedirect('/',params)
+
 def forgotPassword(request):
     if not request.session.get('slogin',False):
-         return render(request,'student/forgotPassword.html')
+        return render(request,'student/forgotPassword.html')
+
 def handleForgotPassword(request):
-    print("lest do it")
     if request.method=="POST":
-        print("i am here")
         tempmail=request.POST.get('email')
         
         tstudent=student.objects.get(email=tempmail)
@@ -175,10 +165,6 @@ def handleForgotPassword(request):
                 'uid':urlsafe_base64_encode(force_bytes(tempmail)),
                 'token':account_activation_token.make_token(tstudent),
             })
-        print(message)
-        print(current_site)
-        print(current_site.domain)
-        print(urlsafe_base64_encode(force_bytes(tempmail)))
         to_email = tempmail
         email = EmailMessage(
                         mail_subject, message,to=[to_email]
@@ -188,6 +174,7 @@ def handleForgotPassword(request):
         return HttpResponseRedirect('studentlogin')
     else:
         return HttpResponse("invalid request")
+
 def changePassword(request,uidb64,token):
     tpflag=True
     try:
@@ -215,17 +202,11 @@ def handleChangePassword(request):
             tpflag=False
         newp=request.POST.get('newP')
         cnewP=request.POST.get('cnewP')
-        
         if tpflag and cnewP and newp==cnewP:
-            print(newp)
-            print(tstudent.password)
             enc_string=pbkdf2_sha256.encrypt(newp,rounds=12000,salt_size=32)
             updated=student.objects.filter(email=uid).update(password=enc_string)
             tstudent.password=enc_string
             tstudent.save()
-            print(pbkdf2_sha256.verify(cnewP,tstudent.password))
-            print(updated)
-            print(tstudent.password)
             messages.success(request,"password changed ")
             return HttpResponseRedirect('studentlogin')
         else:
@@ -234,24 +215,17 @@ def handleChangePassword(request):
     else:
         return HttpResponse("invalid request")
 
-
-
-
 def attemptQuiz(request):
     global params
     if request.method=="POST" :
         if request.session.get('slogin',False):
             value=request.POST.get('paperID1')
             q=question.objects.filter(paperID=value)
-            print("it is me")
             try:
-                print("itsm me1")
                 q1=liveQuestionPaper.objects.get(paperID=value)
-                
                 currentTime=datetime.now()
                 qtime=q1.quizTime
                 qdate=q1.paperDate
-                print(qtime)
                 newdateTime=datetime.combine(qdate,qtime)
                 newdateTime=newdateTime+timedelta(hours=5)
                 if currentTime<newdateTime:
@@ -261,16 +235,23 @@ def attemptQuiz(request):
                     return HttpResponseRedirect("studentpage",params)
             except:
                 pass
+
             params['q']=q
             params['paperID']=value
             request.session['paperID']=value
             try:
-                obj=paperTime.objects.get(paperID=value)
-                params['ashu_time']=obj.quizTime
+                obj=questionPaper.objects.get(paperID=value)
+                params['ashu_time']=obj.duration
+                x = datetime.now()+timedelta(minutes=obj.duration)
+                endTime = x.timestamp()
+                print(endTime)
+                params['endTime']=endTime
             except:
                 params['ashu_time']=60
-
-            
+                x = datetime.now()+timedelta(minutes=60)
+                endTime = x.timestamp()
+                print(endTime)
+                params['endTime']=endTime
             return render(request,"student/attemptQuiz.html",params)
         else:
             messages.error(request, ' please log in In roder to attempt quiz')
@@ -278,7 +259,6 @@ def attemptQuiz(request):
     else:
         messages.error(request, 'first you should choose paper then only you can access the the quiz')
         return HttpResponseRedirect('studentpage',params)
-
 
 def handleAttemptQuiz(request):
     global params
@@ -289,31 +269,17 @@ def handleAttemptQuiz(request):
         r1=0
         t1=0
         for obj in q:
-            name=obj['questionText']
+            name=str(obj["qid"])
             value=request.POST.get(name)
-            print(name)
             t1=t1+1
             total=total+obj['questionMarks']
             if value==obj['rightOption']:
                 right=right+obj['questionMarks']
                 r1=r1+1
-                print("you are goddamn right")
             else:
-                print("you are wrong")
+                pass
         percentage=right/total
         percentage=percentage*100
-        try:
-            print("before1")
-            newp=performance.objects.get(paperID=request.session['paperID'],studentID=request.session['loguser'])
-            print("brfor2")
-            if(newp.percentageMarks<percentage):
-                newp.percentageMarks=percentage
-                newp.time=datetime.now()
-                newp.save()
-        except:
-            print("brfor3")
-            newp=performance(studentID=request.session['loguser'],paperID=request.session['paperID'],time=datetime.now(),percentageMarks=percentage)
-            newp.save()
         params['marks']=percentage
         params['rightQuestion']=r1
         params['totalQuestion']=t1
@@ -351,20 +317,17 @@ def liveAttemptQuiz(request):
         if request.session.get('slogin',False):
             value=request.POST.get('paperID2')
             q=question.objects.filter(paperID=value)
-            print("itsm me")
             try:
-                print("itsm me1")
                 q1=liveQuestionPaper.objects.get(paperID=value)
                 currentTime=datetime.now()
                 qtime=q1.quizTime
                 qdate=q1.paperDate
                 newdateTime=datetime.combine(qdate,qtime)
-                obj21=paperTime.objects.get(paperID=value)
-                enddatetime=newdateTime+timedelta(minutes=obj21.quizTime)
+                obj21=questionPaper.objects.get(paperID=value)
+                enddatetime=newdateTime+timedelta(minutes=obj21.duration)
                 if currentTime<newdateTime or currentTime>enddatetime:
                     tempmessage="you can attempt this paper after"
                     tempmessage=tempmessage+newdateTime.strftime("%b %d %Y %H:%M")
-                    print(tempmessage)
                     messages.error(request,tempmessage)
                     return HttpResponseRedirect("studentpage",params)
             except:
@@ -374,11 +337,29 @@ def liveAttemptQuiz(request):
             params['paperID']=value
             request.session['paperID']=value
             try:
-                obj=paperTime.objects.get(paperID=value)
-                params['ashu_time']=obj.quizTime
+                obj=questionPaper.objects.get(paperID=value)
+                print(obj.duration)
+                params['ashu_time']=obj.duration
+                q1=liveQuestionPaper.objects.get(paperID=value)
+                currentTime=datetime.now()
+                qtime=q1.quizTime
+                qdate=q1.paperDate
+                newdateTime=datetime.combine(qdate,qtime)
+                obj21=questionPaper.objects.get(paperID=value)
+                x=newdateTime+timedelta(minutes=obj21.duration)
+                endTime = x.timestamp()
+                print(endTime)
+                params['endTime']=endTime
             except:
                 params['ashu_time']=60
-            return render(request,"student/liveAttemptQuiz.html",params)
+                x = datetime.now()+timedelta(minutes=60)
+                endTime = x.timestamp()
+                print(endTime)
+                params['endTime']=endTime
+            tempobj=performance.objects.filter(studentID=student.objects.get(email=request.session['loguser']),paperID=questionPaper.objects.get(paperID=request.session['paperID']))
+            if len(tempobj)==0:
+                return render(request,"student/liveAttemptQuiz.html",params)
+            return HttpResponse("invalid access")
         else:
             messages.error(request, ' please log in In roder to attempt quiz')
             return HttpResponseRedirect('studentlogin',params)
@@ -388,6 +369,7 @@ def liveAttemptQuiz(request):
 
 def handleLiveAttemptQuiz(request):
     global params
+    global cheated
     if request.method=='POST':
         q=question.objects.filter(paperID=request.session['paperID']).values()
         total=0
@@ -395,32 +377,42 @@ def handleLiveAttemptQuiz(request):
         r1=0
         t1=0
         for obj in q:
-            name=obj['questionText']
+            name=str(obj["qid"])
             value=request.POST.get(name)
-            print(name)
             t1=t1+1
             total=total+obj['questionMarks']
             if value==obj['rightOption']:
                 right=right+obj['questionMarks']
                 r1=r1+1
-                print("you are goddamn right")
             else:
-                print("you are wrong")
+                pass
         percentage=right/total
         percentage=percentage*100
-        newp=performance(studentID=request.session['loguser'],paperID=request.session['paperID'],time=datetime.now(),percentageMarks=percentage)
-        newp.save()
+        dir1 = 'reports'
+        if not os.path.exists(dir1):
+            os.makedirs(dir1)
+        paperidd = request.session['paperID']
+        sidd = request.session['loguser']
+        filename="reports/"+paperidd+".csv"
+        answ=os.path.exists(filename)
+        print("hello cheated")
+        print(cheated)
+        with open(filename, "a" if answ else "w") as f_object:
+            writer_object = writer(f_object)
+            if not answ:
+                writer_object.writerow(['StudentID','Cheated or Not','Percentage'])
+
+            if (paperidd,sidd) in cheated :
+                writer_object.writerow([sidd,cheated[(paperidd,sidd)],percentage])
+            else :
+                writer_object.writerow([sidd,0,percentage])
+        f_object.close()
         params['marks']=percentage
         params['rightQuestion']=r1
         params['totalQuestion']=t1
-        tempobj=liveTestPerformance.objects.filter(studentID=request.session['loguser'])
-        if len(tempobj)==0:
-            newPerformance=liveTestPerformance(studentID=request.session['loguser'],paperID=request.session['paperID'],studentMarks=percentage)
-            newPerformance.save()
-            print(newPerformance)
-            del request.session['paperID']
-        else:
-            return HttpResponse("invalid access")    
+        newPerformance=performance(studentID=student.objects.get(email=request.session['loguser']),paperID=questionPaper.objects.get(paperID=request.session['paperID']),time=datetime.now(),percentageMarks=percentage)
+        newPerformance.save()
+        del request.session['paperID']  
         return render(request,"student/result.html",params)
     else:
         return HttpResponse("invalid access")
@@ -430,11 +422,13 @@ def handleLeaderBoard(request):
     if request.method=="POST" :
         if request.session.get('slogin',False):
             value=request.POST.get('paperID')
-            leaders=liveTestPerformance.objects.filter(paperID=value)
+            print(value)
+            leaders=performance.objects.filter(paperID=questionPaper.objects.get(paperID=value))
             leaders=leaders.values()
+            print(leaders)
             if len(leaders)==0:
                 return HttpResponse("No data to show")
-            sorted(leaders,key=lambda i:i['studentMarks'],reverse=True)
+            sorted(leaders,key=lambda i:i['percentageMarks'],reverse=True)
             params['leaders']=leaders
             return render(request,"student/handleLeaderBoard.html",params)
         else:
@@ -450,16 +444,15 @@ def studentpage(request):
         params['books']=books
         profile= student.objects.get(email=request.session['loguser'])
         params['profile']=profile
-        paperID=question.objects.values_list('paperID',flat=True).distinct()
+        paperID=questionPaper.objects.all()
         params['paperID']=paperID
-        cdate=date.today()
+        # cdate=date.today()
         paperID1=liveQuestionPaper.objects.all()
         paperID2=[]
-        fdate=[]
+        # fdate=[]
         for obj in paperID1:
             newtime=datetime.combine(obj.paperDate,obj.quizTime)
-            obj21=paperTime.objects.get(paperID=obj.paperID)
-            enddatetime=newtime+timedelta(minutes=obj21.quizTime)
+            enddatetime=newtime+timedelta(minutes=obj.paperID.duration)
             if newtime>datetime.now() or (datetime.now()>newtime and datetime.now()<enddatetime):
                 paperID2.append(obj)       
         params['paperID2']=paperID2
@@ -467,3 +460,33 @@ def studentpage(request):
     else:
         messages.error(request, 'first you should login')
         return HttpResponseRedirect('studentlogin',params)
+
+class saveImage(View) :
+    def post(self,request):
+        # print("SHUBHAm HO gya")
+        data = request.POST.get('image')
+        imageCounter = request.POST.get('imageCounter')
+        imgdata = base64.b64decode(data)
+        paperid = request.session['paperID']
+        sid = request.session['loguser']
+        dir1 = 'proctoring_data/'+paperid
+        if not os.path.exists(dir1):
+            os.makedirs(dir1)
+        dir2 = dir1+'/'+sid
+        if not os.path.exists(dir2):
+            os.makedirs(dir2)
+        filename = dir2+'/img' + imageCounter + '.jpg'
+        with open(filename, 'wb') as f:
+            f.write(imgdata)
+        return HttpResponse('')
+
+class fullScreenViolated(View) :
+    def post(self,request):
+        fullScreenViolatedCounter = request.POST.get('fullScreenViolatedCounter')
+        sid = request.session['loguser']
+        paperID = request.session['paperID']
+        if (paperID, sid) in cheated.keys():
+            cheated[(paperID,sid)]+=1
+        else:
+            cheated[(paperID,sid)]=1
+        return HttpResponse('')

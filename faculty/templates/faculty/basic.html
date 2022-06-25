@@ -1,31 +1,31 @@
 <!doctype html>
-<html lang="en">
+  <html lang="en">
 
-<head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="#">
 
-
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
     integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-  <script src="https://kit.fontawesome.com/163da2d158.js" crossorigin="anonymous"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/163da2d158.js" crossorigin="anonymous"></script>
 
 
-  <title> {% block title %} {%endblock %}</title>
+    <title> Faculty </title>
 
 
-  <style>
-
-    {
-      % block css %
-    }
-    }
+    <style>
 
       {
+        % block css %
+      }
+    }
+
+    {
       %endblock %
     }
   </style>
@@ -49,9 +49,9 @@
   </style>
 </head>
 
-<body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-dark">
-      <a style="float: right;" class="navbar-brand"><strong> ITsFORyou</strong></a>
+<body  onselectstart = 'return false'>
+  <nav class="navbar navbar-expand-lg bg-primary">
+    <a style="float: right;color:white;" class="navbar-brand"><strong> ITsFORyou</strong></a>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -63,87 +63,128 @@
           <a id="myhome" href="facultypage" title="Home" class="text-light"><b style="font-size: x-large;">Home</b></a>
         </li>
         <li class="nav-item remova" style="padding-right: 50px;padding-left: 50px;">
-            <a href="viewProfile" class="text-light" style="float: right;"><i  title="ViewProfile" class="fa fa-user fa-2x"></i></a>
+          <a href="viewProfile" class="text-light" style="float: right;"><i  title="ViewProfile" class="fa fa-user fa-2x"></i></a>
         </li>
         {% endif %}
       </ul>
-      <div id="mydateonly" style="float: right;">
-          <mark>Date: <b id="datetime"></b></mark>
-          <script>
-              var dt = new Date();
-              document.getElementById("datetime").innerHTML = dt.toLocaleDateString();
-          </script>
-        </div>
+      <div id="mydateonly" style="float: right;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+        <mark>Date: <b id="datetime"></b></mark>
+        <script>
+          var dt = new Date();
+          document.getElementById("datetime").innerHTML = dt.toLocaleDateString();
+        </script>
+      </div>
       <span class="navbar-text" style="margin-left: 50px;">
         {% if not request.session.flogin  %}
-          <button type="button" class="btn btn-outline-success"  onclick="window.location.href = '/faculty/facultylogin';">login</button>
+        <button type="button" class="btn btn-outline-light"  onclick="window.location.href = '/faculty/facultylogin';">Login</button>
         {%else%}
-          <div class="dropdown show">
-            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              HELLO! {{ request.session.loguser }}
-            </a>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-              <a class="dropdown-item" href="/faculty/viewProfile" title="View Profile">View profile</a>
-              <a class="dropdown-item" href="/faculty/facultylogout" title="Logout">Logout <i class="fa fa-sign-out fa-1x"></i></a>
-            </div>
+        <div class="dropdown show">
+          <a class="btn btn-outline-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            HELLO! {{ request.session.loguser }}
+          </a>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="/faculty/viewProfile" title="View Profile">View profile</a>
+            <a class="dropdown-item" href="/faculty/facultylogout" title="Logout">Logout <i class="fa fa-sign-out fa-1x"></i></a>
           </div>
+        </div>
         {%endif%}
       </span>
     </div>
   </nav>
 
 
-{% if messages %}
+  {% if messages %}
 
-<script type="text/javascript">
+  <script type="text/javascript">
     $(window).on('load',function(){
-        $('#myModal').modal('show');
+      $('#myModal').modal('show');
     });
-</script>
-<div id="myModal" class="modal show" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title text-danger">Note</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        {%for message in messages %}
-        <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
-          <strong>message!</strong> {{message}}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    // Disable Mouse Right Click
+
+    $(document).ready(function () {
+      //Disable full page
+      $("body").on("contextmenu",function(e){
+        return false;
+      });
+      
+      // //Disable part of page
+      // $("#id").on("contextmenu",function(e){
+      //     return false;
+      // });
+    });
+
+  // Disable Cut Copy & Paste
+  $(document).ready(function () {
+      //Disable full page
+      $('body').bind('cut copy paste', function (e) {
+        e.preventDefault();
+      });
+      
+      //Disable part of page
+      // $('#id').bind('cut copy paste', function (e) {
+      //     e.preventDefault();
+      // });
+    });
+  </script>
+  <div id="myModal" class="modal show" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger">Note</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        {% endfor %}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+        <div class="modal-body">
+          {%for message in messages %}
+          <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+            <strong>message!</strong> {{message}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-{% endif %}
+  {% endif %}
 
 
-{% block body %}
-{% endblock %}
+  {% block body %}
+  {% endblock %}
   
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-    crossorigin="anonymous"></script>
+  integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+  crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-    crossorigin="anonymous"></script>
+  integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+  crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-    crossorigin="anonymous"></script>
+  integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+  crossorigin="anonymous"></script>
 
-   
+  
 </body>
 
 </html>
+
+<script type="text/javascript">
+  //disabling  right click, f12, ctrl+shift+I
+  window.oncontextmenu = function () {
+            return false;
+        }
+        $(document).keydown(function (event) {
+            if (event.keyCode == 123) {
+                return false;
+            }
+            else if ((event.ctrlKey && event.shiftKey && event.keyCode == 73) || (event.ctrlKey && event.shiftKey && event.keyCode == 74)) {
+                return false;
+            }
+        });
+        </script>

@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from student.models import question
 from student.models import questionPaper
 from student.models import studyMaterial
@@ -26,6 +27,10 @@ class questionForm(forms.ModelForm):
             'option4': forms.TextInput(attrs={'style':'width: 25vw'}),
             'rightOption': forms.TextInput(attrs={'style':'width: 25vw'}),
         }
+    def clean(self):
+        if self.cleaned_data['rightOption'] not in ['A','B','C','D']:
+            raise ValidationError('Option can be A,B,C or D')
+        return self.cleaned_data
 
 class questionHead(forms.ModelForm):
     class Meta:
